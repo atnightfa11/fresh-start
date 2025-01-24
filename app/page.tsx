@@ -223,69 +223,69 @@ export default function Home() {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-text">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-text mb-2">
             AI Marketing Intelligence Hub
           </h1>
-          <p className="text-base text-muted-foreground">
+          <p className="text-base text-gray-500">
             Latest Market Intelligence • Updated {new Date().toLocaleDateString()}
           </p>
         </div>
         <Button 
           onClick={refetch} 
           variant="outline" 
-          size="lg" 
-          className="gap-2 bg-white/50 backdrop-blur-sm border-white/50 hover:bg-white/80"
+          size="default"
+          className="gap-2"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full flex space-x-2 bg-white/50 backdrop-blur-sm p-1.5 rounded-2xl border border-white/50 shadow-lg">
+          <TabsList className="w-full flex space-x-1 bg-gray-100/50 p-1 rounded-lg">
             {tabItems.map(({ value, icon: Icon, label }) => (
               <TabsTrigger
                 key={value}
                 value={value}
                 className={cn(
-                  "flex-1 flex items-center justify-center gap-2 py-3 px-6",
-                  "data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-md",
-                  "transition-all duration-300 rounded-xl"
+                  "flex-1 flex items-center justify-center gap-2 py-2 px-3",
+                  "data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm",
+                  "transition-all duration-200"
                 )}
               >
-                <Icon className="h-5 w-5" />
-                <span className="font-semibold">{label}</span>
+                <Icon className="h-4 w-4" />
+                <span>{label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <TabsContent value="trends" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <TabsContent value="trends" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
-                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
-                  <div className="p-6 space-y-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{trend.topic}</CardTitle>
-                    <div className="space-y-5">
-                      <div className="flex items-center gap-3">
-                        <div className="h-2.5 flex-1 bg-blue-100/50 rounded-full overflow-hidden">
+                <Card key={index} className="bg-gradient-card">
+                  <div className="p-6">
+                    <CardTitle>{trend.topic}</CardTitle>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <div className="progress-bar flex-1">
                           <div 
-                            className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
+                            className={`progress-bar-fill ${getProgressWidth(trend.adoption_rate)}`}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-blue-700">
+                        <span className="text-sm font-medium text-gray-700">
                           {(trend.adoption_rate * 100).toFixed(0)}%
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">{trend.technical_details}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Key Metrics:</h4>
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Key Metrics:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
-                              <span className="text-blue-500 mt-1">•</span>
+                            <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                              <span className="text-blue-600 mt-1">•</span>
                               {metric}
                             </li>
                           ))}
@@ -298,36 +298,36 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="insights" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <TabsContent value="insights" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Array.isArray(data?.insights) && data.insights.map((insight, index) => (
-                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
-                  <div className="p-6 space-y-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{insight.area}</CardTitle>
-                    <div className="space-y-5">
-                      <p className="text-sm text-muted-foreground leading-relaxed">{insight.analysis}</p>
+                <Card key={index} className="bg-gradient-card">
+                  <div className="p-6">
+                    <CardTitle>{insight.area}</CardTitle>
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-600 leading-relaxed">{insight.analysis}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Implications:</h4>
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Implications:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(insight.implications) && insight.implications.map((imp, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
-                              <span className="text-blue-500 mt-1">•</span>
+                            <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                              <span className="text-blue-600 mt-1">•</span>
                               {imp}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-blue-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Case Study:</h4>
-                        <p className="text-sm text-muted-foreground">{insight.case_study}</p>
+                      <div className="bg-gray-100/50 rounded-lg p-4">
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Case Study:</h4>
+                        <p className="text-sm text-gray-600">{insight.case_study}</p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="h-2.5 flex-1 bg-blue-100/50 rounded-full overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <div className="progress-bar flex-1">
                           <div 
-                            className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(insight.confidence_score)}`}
+                            className={`progress-bar-fill ${getProgressWidth(insight.confidence_score)}`}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-blue-700">
+                        <span className="text-sm font-medium text-gray-700">
                           {(insight.confidence_score * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -338,35 +338,35 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="news" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <TabsContent value="news" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.isArray(data?.news) && data.news.map((item, index) => (
-                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
-                  <div className="p-6 space-y-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{item.headline}</CardTitle>
-                    <div className="space-y-5">
-                      <div className="flex items-center justify-between text-sm text-blue-900">
+                <Card key={index} className="bg-gradient-card">
+                  <div className="p-6">
+                    <CardTitle>{item.headline}</CardTitle>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-sm text-gray-900">
                         <span className="font-medium">{item.source}</span>
                         <span>{item.date}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
+                      <p className="text-sm text-gray-600 leading-relaxed">{item.summary}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Impact Analysis:</h4>
-                        <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Impact Analysis:</h4>
+                        <p className="text-sm text-gray-600">{item.impact_analysis}</p>
                       </div>
-                      <div className="bg-blue-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Implications:</h4>
-                        <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
+                      <div className="bg-gray-100/50 rounded-lg p-4">
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Technical Implications:</h4>
+                        <p className="text-sm text-gray-600">{item.technical_implications}</p>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">{item.category}</span>
-                        <div className="flex items-center gap-3">
-                          <div className="h-2.5 w-24 bg-blue-100 rounded-full overflow-hidden">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">{item.category}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="progress-bar flex-1">
                             <div 
-                              className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(item.relevance_score)}`}
+                              className={`progress-bar-fill ${getProgressWidth(item.relevance_score)}`}
                             />
                           </div>
-                          <span className="text-blue-700 font-medium">
+                          <span className="text-gray-700 font-medium">
                             {(item.relevance_score * 100).toFixed(0)}%
                           </span>
                         </div>
@@ -378,43 +378,43 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="opportunities" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <TabsContent value="opportunities" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Array.isArray(data?.opportunities) && data.opportunities.map((opp, index) => (
-                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
-                  <div className="p-6 space-y-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{opp.domain}</CardTitle>
-                    <div className="space-y-5">
+                <Card key={index} className="bg-gradient-card">
+                  <div className="p-6">
+                    <CardTitle>{opp.domain}</CardTitle>
+                    <div className="space-y-4">
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Potential:</h4>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{opp.technical_potential}</p>
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Technical Potential:</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">{opp.technical_potential}</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Requirements:</h4>
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">Requirements:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(opp.requirements) && opp.requirements.map((req, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
-                              <span className="text-blue-500 mt-1">•</span>
+                            <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                              <span className="text-blue-600 mt-1">•</span>
                               {req}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-blue-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">ROI Projection:</h4>
-                        <p className="text-sm text-muted-foreground">{opp.roi_projection}</p>
+                      <div className="bg-gray-100/50 rounded-lg p-4">
+                        <h4 className="font-medium text-sm mb-2 text-gray-900">ROI Projection:</h4>
+                        <p className="text-sm text-gray-600">{opp.roi_projection}</p>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                        <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
                           {opp.implementation_complexity}
                         </span>
-                        <div className="flex items-center gap-3">
-                          <div className="h-2.5 w-24 bg-blue-100 rounded-full overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          <div className="progress-bar flex-1">
                             <div 
-                              className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(opp.market_readiness)}`}
+                              className={`progress-bar-fill ${getProgressWidth(opp.market_readiness)}`}
                             />
                           </div>
-                          <span className="text-blue-700 font-medium">
+                          <span className="text-gray-700 font-medium">
                             {(opp.market_readiness * 100).toFixed(0)}%
                           </span>
                         </div>
