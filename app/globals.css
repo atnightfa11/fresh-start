@@ -29,34 +29,34 @@
 
 @layer components {
   .bg-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700;
   }
 
   .bg-gradient-card {
-    @apply bg-white shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-gradient-to-b from-white to-blue-50/30 border border-blue-100/20 shadow-lg hover:shadow-xl transition-all duration-300;
   }
 
   .progress-bar {
-    @apply h-2 rounded-full overflow-hidden bg-gray-100 relative;
+    @apply h-2.5 rounded-full overflow-hidden bg-blue-100/30 relative;
   }
 
   .progress-bar-fill {
-    @apply h-full bg-blue-600 rounded-full absolute inset-0 transition-all duration-300;
+    @apply h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full absolute inset-0 transition-all duration-500;
   }
 
   .animate-loading {
-    animation: loading 1.5s ease-in-out infinite;
+    animation: loading 2s ease-in-out infinite;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      rgb(37, 99, 235) 50%,
+      hsl(var(--primary)) 50%,
       transparent 100%
     );
     background-size: 200% 100%;
   }
 
   .card-title {
-    @apply text-xl font-semibold text-gray-900 mb-4;
+    @apply text-xl font-semibold text-blue-900 mb-4;
   }
 
   .card-content {
@@ -64,7 +64,7 @@
   }
 
   .tag {
-    @apply px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium;
+    @apply px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium text-sm;
   }
 }
 
@@ -74,5 +74,29 @@
 }
 
 body {
-  @apply bg-white text-gray-900 antialiased;
+  @apply antialiased text-foreground;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-blue-100 rounded-full hover:bg-blue-200 transition-colors;
+}
+
+/* Card hover effect */
+.bg-gradient-card {
+  transform: translateY(0);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bg-gradient-card:hover {
+  transform: translateY(-2px);
 }
