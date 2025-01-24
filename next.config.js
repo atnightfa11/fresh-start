@@ -1,16 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  poweredByHeader: false,
-  reactStrictMode: true,
   swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  images: {
-    unoptimized: true,
-    domains: ['localhost'],
-  },
+  reactStrictMode: true,
+  basePath: process.env.VERCEL_ENV === 'production' ? '/ai-marketing' : '',
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -18,12 +13,15 @@ const nextConfig = {
     };
     return config;
   },
-  trailingSlash: true,
-  distDir: 'out',
-  generateBuildId: async () => {
-    return 'build-' + new Date().toISOString().split('T')[0];
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/ai-marketing',
+        permanent: true,
+      },
+    ];
   },
-  serverRuntimeConfig: {},
   publicRuntimeConfig: {
     apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://ai-marketing-hub-backend.onrender.com',
   },
