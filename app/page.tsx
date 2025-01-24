@@ -158,12 +158,12 @@ export default function Home() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-gradient-card rounded-lg p-6 space-y-4 animate-pulse">
-              <div className="h-6 bg-muted rounded w-3/4"></div>
+            <div key={i} className="bg-gradient-card rounded-lg p-6 space-y-4">
+              <div className="h-6 bg-muted/50 rounded w-3/4 animate-pulse"></div>
               <div className="space-y-3">
-                <div className="h-2 bg-muted rounded"></div>
-                <div className="h-2 bg-muted rounded w-5/6"></div>
-                <div className="h-2 bg-muted rounded w-4/6"></div>
+                <div className="h-2 bg-muted/50 rounded animate-pulse"></div>
+                <div className="h-2 bg-muted/50 rounded w-5/6 animate-pulse"></div>
+                <div className="h-2 bg-muted/50 rounded w-4/6 animate-pulse"></div>
               </div>
             </div>
           ))}
@@ -223,67 +223,74 @@ export default function Home() {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text">
+      <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-text">
             AI Marketing Intelligence Hub
           </h1>
           <p className="text-base text-muted-foreground">
             Latest Market Intelligence • Updated {new Date().toLocaleDateString()}
           </p>
         </div>
-        <Button onClick={refetch} variant="outline" size="sm" className="gap-2 hover:bg-blue-50 transition-colors">
+        <Button 
+          onClick={refetch} 
+          variant="outline" 
+          size="lg" 
+          className="gap-2 bg-white/50 backdrop-blur-sm border-white/50 hover:bg-white/80"
+        >
           <RefreshCw className="h-4 w-4" />
           Refresh
         </Button>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-8">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full flex space-x-2 bg-muted/50 p-1 rounded-lg">
+          <TabsList className="w-full flex space-x-2 bg-white/50 backdrop-blur-sm p-1.5 rounded-2xl border border-white/50 shadow-lg">
             {tabItems.map(({ value, icon: Icon, label }) => (
               <TabsTrigger
                 key={value}
                 value={value}
                 className={cn(
-                  "flex-1 flex items-center gap-2 py-2 px-4",
-                  "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
-                  "transition-all duration-200"
+                  "flex-1 flex items-center justify-center gap-2 py-3 px-6",
+                  "data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-md",
+                  "transition-all duration-300 rounded-xl"
                 )}
               >
-                <Icon className="h-4 w-4" />
-                <span>{label}</span>
+                <Icon className="h-5 w-5" />
+                <span className="font-semibold">{label}</span>
               </TabsTrigger>
             ))}
           </TabsList>
 
-          <TabsContent value="trends" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <TabsContent value="trends" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-card">
-                  <CardTitle className="text-xl mb-3 text-primary">{trend.topic}</CardTitle>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full bg-primary rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
-                        />
+                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
+                  <div className="p-6 space-y-6">
+                    <CardTitle className="text-xl font-bold text-blue-900">{trend.topic}</CardTitle>
+                    <div className="space-y-5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2.5 flex-1 bg-blue-100/50 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
+                          />
+                        </div>
+                        <span className="text-sm font-semibold text-blue-700">
+                          {(trend.adoption_rate * 100).toFixed(0)}%
+                        </span>
                       </div>
-                      <span className="text-sm font-medium text-primary">
-                        {(trend.adoption_rate * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Key Metrics:</h4>
-                      <ul className="list-none space-y-1">
-                        {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
-                          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                            <span className="text-primary mt-1">•</span>
-                            {metric}
-                          </li>
-                        ))}
-                      </ul>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
+                      <div>
+                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Key Metrics:</h4>
+                        <ul className="list-none space-y-2">
+                          {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
+                              <span className="text-blue-500 mt-1">•</span>
+                              {metric}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -291,37 +298,39 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="insights" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="insights" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {Array.isArray(data?.insights) && data.insights.map((insight, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-card">
-                  <CardTitle className="text-xl mb-3 text-primary">{insight.area}</CardTitle>
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground leading-relaxed">{insight.analysis}</p>
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Implications:</h4>
-                      <ul className="list-none space-y-1">
-                        {Array.isArray(insight.implications) && insight.implications.map((imp, i) => (
-                          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                            <span className="text-primary mt-1">•</span>
-                            {imp}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="bg-muted rounded-lg p-4">
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Case Study:</h4>
-                      <p className="text-sm text-muted-foreground">{insight.case_study}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full bg-primary rounded-full transition-all duration-500 ${getProgressWidth(insight.confidence_score)}`}
-                        />
+                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
+                  <div className="p-6 space-y-6">
+                    <CardTitle className="text-xl font-bold text-blue-900">{insight.area}</CardTitle>
+                    <div className="space-y-5">
+                      <p className="text-sm text-muted-foreground leading-relaxed">{insight.analysis}</p>
+                      <div>
+                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Implications:</h4>
+                        <ul className="list-none space-y-2">
+                          {Array.isArray(insight.implications) && insight.implications.map((imp, i) => (
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
+                              <span className="text-blue-500 mt-1">•</span>
+                              {imp}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <span className="text-sm font-medium text-primary">
-                        {(insight.confidence_score * 100).toFixed(0)}%
-                      </span>
+                      <div className="bg-blue-100/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Case Study:</h4>
+                        <p className="text-sm text-muted-foreground">{insight.case_study}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-2.5 flex-1 bg-blue-100/50 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(insight.confidence_score)}`}
+                          />
+                        </div>
+                        <span className="text-sm font-semibold text-blue-700">
+                          {(insight.confidence_score * 100).toFixed(0)}%
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -329,36 +338,38 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="news" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <TabsContent value="news" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {Array.isArray(data?.news) && data.news.map((item, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-card">
-                  <CardTitle className="text-xl mb-3 text-primary">{item.headline}</CardTitle>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-sm text-primary">
-                      <span className="font-medium">{item.source}</span>
-                      <span>{item.date}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Impact Analysis:</h4>
-                      <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
-                    </div>
-                    <div className="bg-muted rounded-lg p-4">
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Technical Implications:</h4>
-                      <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="px-3 py-1 bg-muted text-primary rounded-full">{item.category}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-24 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full bg-primary rounded-full transition-all duration-500 ${getProgressWidth(item.relevance_score)}`}
-                          />
+                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
+                  <div className="p-6 space-y-6">
+                    <CardTitle className="text-xl font-bold text-blue-900">{item.headline}</CardTitle>
+                    <div className="space-y-5">
+                      <div className="flex items-center justify-between text-sm text-blue-900">
+                        <span className="font-medium">{item.source}</span>
+                        <span>{item.date}</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Impact Analysis:</h4>
+                        <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
+                      </div>
+                      <div className="bg-blue-100/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Implications:</h4>
+                        <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">{item.category}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="h-2.5 w-24 bg-blue-100 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(item.relevance_score)}`}
+                            />
+                          </div>
+                          <span className="text-blue-700 font-medium">
+                            {(item.relevance_score * 100).toFixed(0)}%
+                          </span>
                         </div>
-                        <span className="text-primary font-medium">
-                          {(item.relevance_score * 100).toFixed(0)}%
-                        </span>
                       </div>
                     </div>
                   </div>
@@ -367,44 +378,46 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="opportunities" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value="opportunities" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {Array.isArray(data?.opportunities) && data.opportunities.map((opp, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-card">
-                  <CardTitle className="text-xl mb-3 text-primary">{opp.domain}</CardTitle>
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Technical Potential:</h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{opp.technical_potential}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2 text-primary">Requirements:</h4>
-                      <ul className="list-none space-y-1">
-                        {Array.isArray(opp.requirements) && opp.requirements.map((req, i) => (
-                          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                            <span className="text-primary mt-1">•</span>
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="bg-muted rounded-lg p-4">
-                      <h4 className="font-semibold text-sm mb-2 text-primary">ROI Projection:</h4>
-                      <p className="text-sm text-muted-foreground">{opp.roi_projection}</p>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="px-3 py-1 bg-muted text-primary rounded-full">
-                        {opp.implementation_complexity}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-24 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full bg-primary rounded-full transition-all duration-500 ${getProgressWidth(opp.market_readiness)}`}
-                          />
-                        </div>
-                        <span className="text-primary font-medium">
-                          {(opp.market_readiness * 100).toFixed(0)}%
+                <Card key={index} className="overflow-hidden backdrop-blur-sm border-white/50">
+                  <div className="p-6 space-y-6">
+                    <CardTitle className="text-xl font-bold text-blue-900">{opp.domain}</CardTitle>
+                    <div className="space-y-5">
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Potential:</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{opp.technical_potential}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Requirements:</h4>
+                        <ul className="list-none space-y-2">
+                          {Array.isArray(opp.requirements) && opp.requirements.map((req, i) => (
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
+                              <span className="text-blue-500 mt-1">•</span>
+                              {req}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="bg-blue-100/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">ROI Projection:</h4>
+                        <p className="text-sm text-muted-foreground">{opp.roi_projection}</p>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+                          {opp.implementation_complexity}
                         </span>
+                        <div className="flex items-center gap-3">
+                          <div className="h-2.5 w-24 bg-blue-100 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ${getProgressWidth(opp.market_readiness)}`}
+                            />
+                          </div>
+                          <span className="text-blue-700 font-medium">
+                            {(opp.market_readiness * 100).toFixed(0)}%
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
