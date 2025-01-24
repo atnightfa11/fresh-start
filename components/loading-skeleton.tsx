@@ -32,7 +32,7 @@ export const LoadingSkeleton = () => {
         <p className="text-lg font-medium text-gray-600">{message}</p>
         {waitTime > 15 && (
           <p className="text-sm text-gray-500 mt-2">
-            First load takes a moment - it'll be quicker next time!
+            First load takes a moment - it&apos;ll be quicker next time!
           </p>
         )}
       </div>

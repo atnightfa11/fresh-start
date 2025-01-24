@@ -127,7 +127,7 @@ export default function Home() {
             AI Marketing Intelligence Hub
           </h1>
           <p className="text-center text-muted-foreground mb-12">
-            Latest Marketing Intelligence - Updated {new Date().toLocaleDateString()}
+            Latest Marketing Intelligence - Updated <time dateTime={new Date().toISOString()}>{new Date().toLocaleDateString()}</time>
           </p>
         </div>
         <Button 
@@ -241,6 +241,7 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
+                      <p className="text-base leading-relaxed text-muted-foreground">Our AI&apos;s confidence level in this insight based on data analysis and market signals</p>
                     </div>
                   </div>
                 </Card>
