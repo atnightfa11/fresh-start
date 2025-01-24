@@ -121,13 +121,13 @@ export default function Home() {
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-text mb-2">
             AI Marketing Intelligence Hub
           </h1>
           <p className="text-base text-muted-foreground">
-            Latest Market Intelligence • Updated {new Date().toLocaleDateString()}
+            Latest Market Intelligence • Updated <time dateTime={new Date().toISOString()}>{new Date().toLocaleDateString()}</time>
           </p>
         </div>
         <Button 
@@ -135,13 +135,14 @@ export default function Home() {
           variant="outline" 
           size="lg"
           className="gap-2 bg-white/80 hover:bg-white/90 border-blue-100 transition-all duration-300"
+          aria-label="Refresh data"
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className="h-4 w-4" aria-hidden="true" />
           Refresh
         </Button>
-      </div>
+      </header>
 
-      <div className="mt-6">
+      <nav className="mt-6" aria-label="Content sections">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full flex space-x-2 bg-white/80 p-1.5 rounded-xl border border-blue-100/20 shadow-md">
             {tabItems.map(({ value, icon: Icon, label }) => (
@@ -154,8 +155,9 @@ export default function Home() {
                   "data-[state=active]:text-blue-700 data-[state=active]:shadow-md",
                   "rounded-lg transition-all duration-200 hover:bg-white/50"
                 )}
+                aria-label={`View ${label}`}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4" aria-hidden="true" />
                 <span className="font-medium">{label}</span>
               </TabsTrigger>
             ))}
@@ -325,10 +327,12 @@ export default function Home() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
+      </nav>
 
       {process.env.NODE_ENV === 'development' && (
-        <DebugPanel data={data} loading={loading} error={error} />
+        <aside aria-label="Debug information">
+          <DebugPanel data={data} loading={loading} error={error} />
+        </aside>
       )}
     </main>
   );

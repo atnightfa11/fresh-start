@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f3f4f6"/>
+    </linearGradient>
+    <linearGradient id="titleGradient" x1="0" y1="0" x2="600" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Main content container -->
+  <g transform="translate(100, 100)">
+    <!-- Title -->
+    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="bold" fill="url(#titleGradient)">
+      AI Marketing Intelligence Hub
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#6b7280">
+      Real-time Marketing Insights
+    </text>
+
+    <!-- Feature icons and text -->
+    <g transform="translate(0, 160)">
+      <!-- Trends -->
+      <circle cx="50" cy="50" r="40" fill="#2563eb" fill-opacity="0.1"/>
+      <path d="M30 50 L50 30 L70 50 L90 20" stroke="#2563eb" stroke-width="3"/>
+      <text x="120" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#374151">Market Trends</text>
+
+      <!-- Insights -->
+      <g transform="translate(0, 120)">
+        <circle cx="50" cy="50" r="40" fill="#2563eb" fill-opacity="0.1"/>
+        <path d="M35 65 L50 35 L65 65" stroke="#2563eb" stroke-width="3"/>
+        <text x="120" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#374151">Strategic Insights</text>
+      </g>
+
+      <!-- Opportunities -->
+      <g transform="translate(0, 240)">
+        <circle cx="50" cy="50" r="40" fill="#2563eb" fill-opacity="0.1"/>
+        <path d="M35 50 L65 50 M50 35 L50 65" stroke="#2563eb" stroke-width="3"/>
+        <text x="120" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#374151">Market Opportunities</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom URL -->
+  <text x="100" y="580" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="#6b7280">
+    heathergrass.com/ai-marketing
+  </text>
+</svg> 
