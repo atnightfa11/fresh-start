@@ -84,6 +84,19 @@ const DebugPanel = ({ data, loading, error }: DebugPanelProps) => {
   );
 };
 
+const TRUSTED_SOURCES = [
+  'TechCrunch',
+  'Forbes',
+  'Harvard Business Review',
+  'MIT Technology Review',
+  'Wall Street Journal',
+  'Bloomberg',
+  'Reuters',
+  'VentureBeat',
+  'Gartner',
+  'McKinsey'
+];
+
 export default function Home() {
   const { data, loading, error, refetch } = useMarketingData();
   const [activeTab, setActiveTab] = useState('news');
@@ -163,19 +176,42 @@ export default function Home() {
                   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
                   return newsDate >= threeMonthsAgo;
                 })
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .sort((a, b) => {
+                  // First sort by trusted source
+                  const aIsTrusted = TRUSTED_SOURCES.includes(a.source);
+                  const bIsTrusted = TRUSTED_SOURCES.includes(b.source);
+                  if (aIsTrusted !== bIsTrusted) {
+                    return aIsTrusted ? -1 : 1;
+                  }
+                  // Then by date
+                  return new Date(b.date).getTime() - new Date(a.date).getTime();
+                })
                 .map((item, index) => {
                   const newsDate = new Date(item.date);
-                  const isRecent = new Date().getTime() - newsDate.getTime() < 7 * 24 * 60 * 60 * 1000; // 7 days
+                  const isRecent = new Date().getTime() - newsDate.getTime() < 7 * 24 * 60 * 60 * 1000;
+                  const isTrustedSource = TRUSTED_SOURCES.includes(item.source);
                   
                   return (
-                    <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                    <Card key={index} className={cn(
+                      "bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300",
+                      isTrustedSource && "ring-1 ring-amber-200"
+                    )}>
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <CardTitle className="text-xl font-bold text-primary">{item.headline}</CardTitle>
-                          {isRecent && (
-                            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">New</span>
-                          )}
+                          <div className="flex gap-2">
+                            {isRecent && (
+                              <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">New</span>
+                            )}
+                            {isTrustedSource && (
+                              <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                Trusted
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="space-y-6">
                           <div className="flex items-center justify-between text-sm">
