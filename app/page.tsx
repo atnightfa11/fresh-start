@@ -88,13 +88,6 @@ export default function Home() {
   const { data, loading, error, refetch } = useMarketingData();
   const [activeTab, setActiveTab] = useState('news');
 
-  // Debug logging
-  useEffect(() => {
-    console.log('Current data state:', data);
-    console.log('Loading state:', loading);
-    console.log('Error state:', error);
-  }, [data, loading, error]);
-
   const tabItems = [
     { value: 'news', icon: Newspaper, label: 'News' },
     { value: 'insights', icon: Brain, label: 'Insights' },
