@@ -30,7 +30,8 @@ const useMarketingData = () => {
       
       console.log('Fetching data from API...');
       
-      const response = await fetch('/api/market-intelligence', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/market-intelligence`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
