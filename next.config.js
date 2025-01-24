@@ -5,7 +5,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   reactStrictMode: true,
-  basePath: process.env.VERCEL_ENV === 'production' ? '/ai-marketing' : '',
+  basePath: '/ai-marketing',
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
