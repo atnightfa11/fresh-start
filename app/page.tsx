@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { LoadingSkeleton } from '../components/loading-skeleton';
 import type { MarketIntelligenceData } from '../types/api';
+import { cn } from "../lib/utils";
 
 const useMarketingData = () => {
   const [data, setData] = useState<MarketIntelligenceData | null>(null);
@@ -121,6 +122,8 @@ const DebugPanel = ({ data, loading, error }: DebugPanelProps) => {
   );
 };
 
+const getProgressWidth = (value: number) => `w-[${(value * 100).toFixed(0)}%]`;
+
 export default function Home() {
   const { data, loading, error, refetch } = useMarketingData();
   const [activeTab, setActiveTab] = useState('trends');
@@ -228,7 +231,11 @@ export default function Home() {
               <TabsTrigger
                 key={value}
                 value={value}
-                className="flex-1 flex items-center gap-2 py-2 px-4 data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm transition-all duration-200"
+                className={cn(
+                  "flex-1 flex items-center gap-2 py-2 px-4",
+                  "data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm",
+                  "transition-all duration-200"
+                )}
               >
                 <Icon className="h-4 w-4" />
                 <span>{label}</span>
@@ -245,8 +252,7 @@ export default function Home() {
                     <div className="flex items-center gap-2">
                       <div className="h-2 flex-1 bg-blue-100 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-blue-600 rounded-full transition-all duration-500" 
-                          style={{ width: `${(trend.adoption_rate * 100).toFixed(0)}%` }}
+                          className={`h-full bg-blue-600 rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
                         />
                       </div>
                       <span className="text-sm font-medium text-blue-600">
@@ -296,8 +302,7 @@ export default function Home() {
                     <div className="flex items-center gap-2">
                       <div className="h-2 flex-1 bg-purple-100 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-purple-600 rounded-full transition-all duration-500" 
-                          style={{ width: `${(insight.confidence_score * 100).toFixed(0)}%` }}
+                          className={`h-full bg-purple-600 rounded-full transition-all duration-500 ${getProgressWidth(insight.confidence_score)}`}
                         />
                       </div>
                       <span className="text-sm font-medium text-purple-600">
@@ -334,8 +339,7 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-24 bg-green-100 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-green-600 rounded-full transition-all duration-500" 
-                            style={{ width: `${(item.relevance_score * 100).toFixed(0)}%` }}
+                            className={`h-full bg-green-600 rounded-full transition-all duration-500 ${getProgressWidth(item.relevance_score)}`}
                           />
                         </div>
                         <span className="text-green-600 font-medium">
@@ -381,8 +385,7 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-24 bg-amber-100 rounded-full overflow-hidden">
                           <div 
-                            className="h-full bg-amber-600 rounded-full transition-all duration-500" 
-                            style={{ width: `${(opp.market_readiness * 100).toFixed(0)}%` }}
+                            className={`h-full bg-amber-600 rounded-full transition-all duration-500 ${getProgressWidth(opp.market_readiness)}`}
                           />
                         </div>
                         <span className="text-amber-600 font-medium">
