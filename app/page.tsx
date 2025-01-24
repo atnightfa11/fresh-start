@@ -146,12 +146,15 @@ export default function Home() {
     return (
       <div className="p-4 md:p-10 mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent animate-pulse">
             AI Marketing Intelligence Hub
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Loading data... Please wait.
+          <p className="text-base text-muted-foreground mt-2">
+            Loading your personalized market insights...
           </p>
+          <div className="w-full h-1 bg-blue-100 rounded-full mt-4 overflow-hidden">
+            <div className="h-full bg-blue-600 rounded-full w-1/3 animate-[loading_1s_ease-in-out_infinite]"></div>
+          </div>
         </div>
         <LoadingSkeleton />
       </div>
