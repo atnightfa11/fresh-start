@@ -247,14 +247,18 @@ class MarketIntelligence:
         self.api_key = os.getenv('PERPLEXITY_API_KEY')
         if not self.api_key:
             raise ValueError("PERPLEXITY_API_KEY not found in environment variables")
-            
+        
         self.api_url = "https://api.perplexity.ai/chat/completions"
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-        self.timeout = aiohttp.ClientTimeout(total=30)  # 30 second timeout
-        
+        self.timeout = aiohttp.ClientTimeout(total=30)
+        self.cache_ttl = int(os.getenv('CACHE_TTL', 3600 * 4))  # 4 hours default
+        self.cache_key = "market_intelligence_data"
+        self.last_fetch_key = "last_fetch_timestamp"
+        self.min_fetch_interval = 300  # 5 minutes between API calls
+
         self.trends_prompt = """
         Analyze current AI marketing technology trends and provide detailed insights.
         Focus on real implementations, technical details, and quantifiable results from the last 6 months.
@@ -334,185 +338,169 @@ class MarketIntelligence:
         }
         """
 
-    async def __aenter__(self):
-        self.session = requests.Session()
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if self.session:
-            self.session.close()
-
-    def _get_cache_key(self, prompt: str) -> str:
-        """Generate a cache key for a given prompt"""
-        return f"market_intelligence:{hash(prompt)}"
-
-    def _validate_data(self, data: Dict, schema_type: str) -> Dict:
-        """Validate data against the appropriate schema"""
+    async def get_cached_data(self, redis):
+        """Get data from cache if available and valid"""
+        if not redis:
+            return None
+            
         try:
-            if schema_type == "trends":
-                for trend in data.get("trends", []):
-                    validate(instance=trend, schema=TREND_SCHEMA)
-                for event in data.get("trend_timeline", []):
-                    validate(instance=event, schema=TIMELINE_EVENT_SCHEMA)
-            elif schema_type == "insights":
-                for insight in data.get("insights", []):
-                    validate(instance=insight, schema=INSIGHT_SCHEMA)
-            elif schema_type == "news":
-                for news in data.get("news", []):
-                    validate(instance=news, schema=NEWS_SCHEMA)
-            elif schema_type == "opportunities":
-                for opp in data.get("opportunities", []):
-                    validate(instance=opp, schema=OPPORTUNITY_SCHEMA)
-            return data
-        except ValidationError as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Data validation failed: {str(e)}"
-            )
+            cached_data = await redis.get(self.cache_key)
+            if cached_data:
+                return json.loads(cached_data)
+        except Exception as e:
+            logger.error(f"Error reading from cache: {e}")
+        return None
 
-    async def query_perplexity(self, prompt: str, max_retries: int = 3) -> Dict:
-        """Make a request to Perplexity API with caching and retry logic"""
-        redis = await get_redis()
-        cache_key = self._get_cache_key(prompt)
-        
-        # Try to get from cache first
-        if redis:
-            try:
-                cached_response = await redis.get(cache_key)
-                if cached_response:
-                    return json.loads(cached_response)
-            except Exception as e:
-                print(f"Redis error while getting cache: {str(e)}")
+    async def set_cached_data(self, redis, data):
+        """Set data in cache with TTL"""
+        if not redis:
+            return
+            
+        try:
+            await redis.setex(self.cache_key, self.cache_ttl, json.dumps(data))
+            await redis.set(self.last_fetch_key, str(time.time()))
+        except Exception as e:
+            logger.error(f"Error writing to cache: {e}")
 
-        last_error = None
-        async with aiohttp.ClientSession(timeout=self.timeout) as session:
-            for attempt in range(max_retries):
+    async def should_fetch_new_data(self, redis):
+        """Check if we should fetch new data based on last fetch time"""
+        if not redis:
+            return True
+            
+        try:
+            last_fetch = await redis.get(self.last_fetch_key)
+            if not last_fetch:
+                return True
+            
+            time_since_last_fetch = time.time() - float(last_fetch)
+            return time_since_last_fetch > self.min_fetch_interval
+        except Exception as e:
+            logger.error(f"Error checking last fetch time: {e}")
+            return True
+
+    async def get_intelligence(self):
+        """Get AI marketing intelligence data with enhanced caching"""
+        try:
+            redis = await get_redis()
+            
+            # Try to get cached data first
+            cached_data = await self.get_cached_data(redis)
+            if cached_data:
+                logger.info("Returning cached data")
+                return cached_data
+                
+            # Check if we should fetch new data
+            if not await self.should_fetch_new_data(redis):
+                logger.info("Too soon to fetch new data")
+                return cached_data if cached_data else {"error": "Rate limited"}
+                
+            # Fetch new data
+            logger.info("Fetching fresh data from API")
+            timeout = aiohttp.ClientTimeout(total=60)
+            
+            async with aiohttp.ClientSession(timeout=timeout) as session:
                 try:
-                    payload = {
-                        "model": "sonar-pro",  # Updated to use Sonar Pro
-                        "messages": [
-                            {
-                                "role": "system",
-                                "content": "You are a marketing intelligence analyst. Respond ONLY with the JSON object matching the exact structure specified."
-                            },
-                            {
-                                "role": "user",
-                                "content": prompt
-                            }
-                        ],
-                        "temperature": 0.7
-                    }
-
                     async with session.post(
                         self.api_url,
                         headers=self.headers,
-                        json=payload
-                    ) as response:
-                        response.raise_for_status()
-                        data = await response.json()
-                        
-                        print(f"Raw API response: {data}")  # Debug log
-                        content = data['choices'][0]['message']['content']
-                        parsed_content = self._parse_content(content)
-                        
-                        # Cache the response if Redis is available
-                        if redis:
-                            try:
-                                await redis.setex(
-                                    cache_key,
-                                    CACHE_TTL,
-                                    json.dumps(parsed_content)
-                                )
-                            except Exception as e:
-                                print(f"Redis error while setting cache: {str(e)}")
-                        
-                        return parsed_content
-
-                except asyncio.TimeoutError:
-                    last_error = "Request timed out"
-                except Exception as e:
-                    last_error = str(e)
-                
-                if attempt < max_retries - 1:
-                    await asyncio.sleep(2 ** attempt)  # Exponential backoff
-                    
-            raise HTTPException(
-                status_code=500,
-                detail=f"API request failed after {max_retries} attempts: {last_error}"
-            )
-
-    async def get_insights(self) -> Dict:
-        """Collect market intelligence using Perplexity with parallel requests"""
-        # Check if we have a complete cached response
-        cache_key = "market_intelligence:complete"
-        cached_response = await get_redis().get(cache_key)
-        if cached_response:
-            return json.loads(cached_response)
-
-        prompts = {
-            "trends": self.trends_prompt,
-            "insights": self.insights_prompt,
-            "news": self.news_prompt,
-            "opportunities": self.opportunities_prompt
+                        json={
+                            "model": "sonar-pro",
+                            "messages": [
+                                {
+                                    "role": "system",
+                                    "content": """You are an AI marketing intelligence analyst. Return a JSON object with EXACTLY this structure:
+{
+    "trends": [
+        {
+            "topic": "string",
+            "metrics": ["string"],
+            "technical_details": "string",
+            "adoption_rate": number (0-1)
         }
-
-        try:
-            async with self:
-                tasks = []
-                for section, prompt in prompts.items():
-                    task = asyncio.create_task(self.query_perplexity(prompt))
-                    tasks.append((section, task))
-
-                results = {}
-                errors = []
-
-                for section, task in tasks:
-                    try:
-                        result = await task
-                        results[section] = result
-                    except Exception as e:
-                        errors.append(f"{section}: {str(e)}")
-
-                if errors:
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Errors occurred while fetching data: {'; '.join(errors)}"
-                    )
-
-                response = {
-                    "trends": results["trends"].get("trends", []),
-                    "trend_timeline": results["trends"].get("trend_timeline", []),
-                    "insights": results["insights"].get("insights", []),
-                    "news": results["news"].get("news", []),
-                    "opportunities": results["opportunities"].get("opportunities", []),
-                    "timestamp": datetime.now().isoformat()
-                }
-
-                # Validate complete response
-                try:
-                    validate(instance=response, schema=RESPONSE_SCHEMA)
-                except ValidationError as e:
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Response validation failed: {str(e)}"
-                    )
-                
-                # Cache the complete response
-                await get_redis().setex(
-                    cache_key,
-                    CACHE_TTL,
-                    json.dumps(response)
-                )
-                
-                return response
-
+    ],
+    "trend_timeline": [
+        {
+            "date": "YYYY-Q#",
+            "value": number (0-100),
+            "event": "string",
+            "technical_milestone": "string"
+        }
+    ],
+    "insights": [
+        {
+            "area": "string",
+            "analysis": "string",
+            "implications": ["string"],
+            "case_study": "string",
+            "confidence_score": number (0-1)
+        }
+    ],
+    "news": [
+        {
+            "headline": "string",
+            "category": "Industry Move|Product Launch|Research|Regulation",
+            "summary": "string",
+            "impact_analysis": "string",
+            "technical_implications": "string",
+            "date": "YYYY-MM-DD",
+            "source": "string",
+            "relevance_score": number (0-1)
+        }
+    ],
+    "opportunities": [
+        {
+            "domain": "string",
+            "technical_potential": "string",
+            "requirements": ["string"],
+            "roi_projection": "string",
+            "implementation_complexity": "High|Medium|Low",
+            "market_readiness": number (0-1)
+        }
+    ],
+    "timestamp": "YYYY-MM-DD HH:MM:SS",
+    "cache_timestamp": "YYYY-MM-DD HH:MM:SS"
+}"""
+                                },
+                                {
+                                    "role": "user",
+                                    "content": self.trends_prompt
+                                }
+                            ],
+                            "temperature": 0.7,
+                            "max_tokens": 2000
+                        }
+                    ) as response:
+                        if response.status != 200:
+                            if cached_data:
+                                logger.warning("API error, returning cached data")
+                                return cached_data
+                            error_text = await response.text()
+                            return {"error": f"API error: {error_text}"}
+                        
+                        data = await response.json()
+                        content = data['choices'][0]['message']['content']
+                        cleaned_content = self.clean_json(content)
+                        parsed_data = json.loads(cleaned_content)
+                        
+                        # Add cache timestamp
+                        parsed_data['cache_timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        
+                        # Validate and cache the data
+                        validate(instance=parsed_data, schema=RESPONSE_SCHEMA)
+                        await self.set_cached_data(redis, parsed_data)
+                        
+                        return parsed_data
+                        
+                except Exception as e:
+                    logger.error(f"Error fetching data: {e}")
+                    if cached_data:
+                        logger.warning("Error fetching new data, returning cached data")
+                        return cached_data
+                    raise
+                    
         except Exception as e:
-            print(f"Error getting insights: {str(e)}")
-            print(f"Full traceback: {traceback.format_exc()}")
-            raise HTTPException(
-                status_code=500,
-                detail=f"Failed to get market intelligence: {str(e)}"
-            )
+            logger.error(f"Unexpected error: {e}")
+            return {"error": str(e)}
 
     def _extract_insights(self, response):
         """Extract insights from the response."""
@@ -647,164 +635,6 @@ class MarketIntelligence:
             logger.error(f"Raw content: {content}")
             raise ValueError(f"Failed to parse content: {str(e)}")
 
-    async def get_intelligence(self):
-        """Get AI marketing intelligence data."""
-        try:
-            logger.info("Starting get_intelligence method")
-            timeout = aiohttp.ClientTimeout(total=60)
-            
-            async with aiohttp.ClientSession(timeout=timeout) as session:
-                try:
-                    logger.info("Making API request to Perplexity")
-                    async with session.post(
-                        self.api_url,
-                        headers=self.headers,
-                        json={
-                            "model": "sonar-pro",
-                            "messages": [
-                                {
-                                    "role": "system",
-                                    "content": """You are an AI marketing intelligence analyst. Return a JSON object with EXACTLY this structure:
-{
-    "trends": [
-        {
-            "topic": "string",
-            "metrics": ["string"],
-            "technical_details": "string",
-            "adoption_rate": number (0-1)
-        }
-    ],
-    "trend_timeline": [
-        {
-            "date": "YYYY-Q#",
-            "value": number (0-100),
-            "event": "string",
-            "technical_milestone": "string"
-        }
-    ],
-    "insights": [
-        {
-            "area": "string",
-            "analysis": "string",
-            "implications": ["string"],
-            "case_study": "string",
-            "confidence_score": number (0-1)
-        }
-    ],
-    "news": [
-        {
-            "headline": "string",
-            "category": "Industry Move|Product Launch|Research|Regulation",
-            "summary": "string",
-            "impact_analysis": "string",
-            "technical_implications": "string",
-            "date": "YYYY-MM-DD",
-            "source": "string",
-            "relevance_score": number (0-1)
-        }
-    ],
-    "opportunities": [
-        {
-            "domain": "string",
-            "technical_potential": "string",
-            "requirements": ["string"],
-            "roi_projection": "string",
-            "implementation_complexity": "High|Medium|Low",
-            "market_readiness": number (0-1)
-        }
-    ],
-    "timestamp": "YYYY-MM-DD HH:MM:SS"
-}"""
-                                },
-                                {
-                                    "role": "user",
-                                    "content": self.trends_prompt
-                                }
-                            ],
-                            "temperature": 0.7,
-                            "max_tokens": 2000
-                        }
-                    ) as response:
-                        logger.info(f"API Response Status: {response.status}")
-                        
-                        if response.status != 200:
-                            error_text = await response.text()
-                            logger.error(f"API Error Response: {error_text}")
-                            return {
-                                "error": f"Perplexity API error (Status {response.status}): {error_text}"
-                            }
-                        
-                        # Get the raw response text
-                        response_text = await response.text()
-                        logger.info("Received response from API")
-                        logger.debug(f"Raw response: {response_text}")
-                        
-                        try:
-                            # Parse the response as JSON
-                            data = json.loads(response_text)
-                            logger.info("Successfully parsed API response")
-                            
-                            # Extract the content from the message
-                            if 'choices' not in data or not data['choices']:
-                                error_msg = "No choices in API response"
-                                logger.error(error_msg)
-                                return {"error": error_msg}
-                            
-                            content = data['choices'][0]['message']['content']
-                            logger.info("Extracted content from response")
-                            
-                            # Remove any markdown code block markers
-                            if '```json' in content:
-                                content = content.split('```json')[1].split('```')[0].strip()
-                            elif '```' in content:
-                                content = content.split('```')[1].strip()
-                            
-                            # Clean the JSON content
-                            try:
-                                cleaned_content = self.clean_json(content)
-                                parsed_data = json.loads(cleaned_content)
-                                logger.info("Successfully parsed cleaned content as JSON")
-                                
-                                # Add timestamp if missing
-                                if 'timestamp' not in parsed_data:
-                                    parsed_data['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                
-                                # Ensure opportunities array exists
-                                if 'opportunities' not in parsed_data:
-                                    parsed_data['opportunities'] = []
-                                
-                                # Validate against schema
-                                try:
-                                    validate(instance=parsed_data, schema=RESPONSE_SCHEMA)
-                                    logger.info("Schema validation successful")
-                                    return parsed_data
-                                except ValidationError as e:
-                                    error_msg = f"Schema validation error: {str(e)}"
-                                    logger.error(error_msg)
-                                    return {"error": error_msg}
-                                
-                            except (ValueError, json.JSONDecodeError) as e:
-                                error_msg = f"JSON parsing error: {str(e)}"
-                                logger.error(error_msg)
-                                logger.error(f"Content that failed to parse: {content}")
-                                return {"error": error_msg}
-                            
-                        except Exception as e:
-                            error_msg = f"Error processing response: {str(e)}"
-                            logger.error(error_msg)
-                            logger.error(f"Response that caused error: {response_text}")
-                            return {"error": error_msg}
-                            
-                except aiohttp.ClientError as e:
-                    error_msg = f"API request failed: {str(e)}"
-                    logger.error(error_msg)
-                    return {"error": error_msg}
-                    
-        except Exception as e:
-            error_msg = f"Unexpected error: {str(e)}"
-            logger.error(error_msg)
-            return {"error": error_msg}
-
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
@@ -821,7 +651,7 @@ async def get_market_intelligence(request: Request):
         market_intel = MarketIntelligence()
         
         # Get the data
-        data = await market_intel.get_intelligence()  # Changed from get_insights to get_intelligence
+        data = await market_intel.get_intelligence()
         
         if "error" in data:
             return JSONResponse(
