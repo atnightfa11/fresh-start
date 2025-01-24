@@ -14,82 +14,44 @@ const useMarketingData = () => {
   const [data, setData] = useState<MarketIntelligenceData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      console.log('Fetching data from API...');
-      
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/market-intelligence`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      console.log('Response status:', response.status);
-      const responseText = await response.text();
-      console.log('Raw response text length:', responseText.length);
-      console.log('First 500 characters of response:', responseText.substring(0, 500));
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data: ${response.status} ${responseText}`);
-      }
-
-      try {
-        const responseData = JSON.parse(responseText) as MarketIntelligenceData;
-        console.log('Successfully parsed response data');
-        console.log('Data structure:', {
-          hasTrends: Boolean(responseData.trends),
-          trendsLength: responseData.trends?.length,
-          hasInsights: Boolean(responseData.insights),
-          insightsLength: responseData.insights?.length,
-          hasNews: Boolean(responseData.news),
-          newsLength: responseData.news?.length,
-          hasOpportunities: Boolean(responseData.opportunities),
-          opportunitiesLength: responseData.opportunities?.length,
-        });
-        
-        // Validate the data structure
-        if (!responseData.trends || !responseData.insights || !responseData.news || !responseData.opportunities) {
-          console.error('Missing required data sections:', {
-            trends: !responseData.trends,
-            insights: !responseData.insights,
-            news: !responseData.news,
-            opportunities: !responseData.opportunities
-          });
-          throw new Error('Invalid data structure received from API');
-        }
-        
-        // Set the data only if it has the correct structure
-        setData(responseData);
-        setError(null);
-        console.log('Data successfully set to state');
-      } catch (parseError) {
-        console.error('Error parsing JSON:', parseError);
-        console.error('Response text that failed to parse:', responseText);
-        throw new Error('Failed to parse response data');
-      }
-    } catch (error) {
-      console.error('Error in fetchData:', error);
-      setError(error instanceof Error ? error.message : 'An unknown error occurred');
-      setData(null);
-    } finally {
-      setLoading(false);
-      console.log('Fetch completed, loading set to false');
-    }
-  };
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const startTime = Date.now();
+        const response = await fetch(`${apiUrl}/api/market-intelligence`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const responseText = await response.text();
+        const responseData = JSON.parse(responseText) as MarketIntelligenceData;
+        
+        // Ensure loading shows for at least 2 seconds
+        const elapsedTime = Date.now() - startTime;
+        const minimumLoadingTime = 2000; // 2 seconds
+        
+        if (elapsedTime < minimumLoadingTime) {
+          await new Promise(resolve => setTimeout(resolve, minimumLoadingTime - elapsedTime));
+        }
+        
+        setData(responseData);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
-  }, []);
+  }, [refetchTrigger]);
 
   const refetch = () => {
-    console.log('Refetching data...');
-    fetchData();
+    setRefetchTrigger(prev => prev + 1);
   };
 
   return { data, loading, error, refetch };
@@ -139,89 +101,21 @@ export default function Home() {
     { value: 'news', icon: Newspaper, label: 'News' },
     { value: 'insights', icon: Brain, label: 'Insights' },
     { value: 'trends', icon: TrendingUp, label: 'Trends' },
-    { value: 'opportunities', icon: Share2, label: 'Opportunities' },
+    { value: 'opportunities', icon: Share2, label: 'Opportunities' }
   ];
 
   if (loading) {
-    return (
-      <div className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text animate-pulse">
-            AI Marketing Intelligence Hub
-          </h1>
-          <p className="text-base text-muted-foreground mt-2 animate-pulse">
-            Loading your personalized market insights...
-          </p>
-          <div className="progress-bar mt-6">
-            <div className="progress-bar-fill animate-loading"></div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-gradient-card rounded-xl p-6 space-y-4">
-              <div className="h-7 bg-muted/50 rounded-lg w-3/4 animate-pulse"></div>
-              <div className="space-y-3">
-                <div className="h-2.5 bg-muted/50 rounded-full animate-pulse"></div>
-                <div className="h-2.5 bg-muted/50 rounded-full w-5/6 animate-pulse"></div>
-                <div className="h-2.5 bg-muted/50 rounded-full w-4/6 animate-pulse"></div>
-              </div>
-              <div className="mt-4 flex items-center gap-2">
-                <div className="h-2 w-full bg-muted/50 rounded-full animate-pulse"></div>
-                <div className="h-5 w-12 bg-muted/50 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-semibold tracking-tight bg-gradient-text">
-            AI Marketing Intelligence Hub
-          </h1>
-          <Button onClick={refetch} variant="outline" size="lg" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Retry
-          </Button>
-        </div>
-        <Alert variant="destructive" className="animate-in fade-in-50">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription className="mt-2">
-            <div className="font-semibold">Error loading data:</div>
-            <div className="mt-1">{error}</div>
-            <div className="mt-2 text-sm">
-              Please check your connection or try refreshing the page.
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  // Add explicit check for data existence
-  if (!data || !data.trends || !data.insights || !data.news || !data.opportunities) {
-    return (
-      <div className="p-4 md:p-10 mx-auto max-w-7xl">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            AI Marketing Intelligence Hub
-          </h1>
-          <Button onClick={refetch} className="gap-2">
-            <RefreshCw />
-            Retry
-          </Button>
-        </div>
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            No data available. Please try refreshing the page.
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert variant="destructive" className="max-w-2xl mx-auto mt-8">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          {error}
+        </AlertDescription>
+      </Alert>
     );
   }
 
@@ -272,7 +166,7 @@ export default function Home() {
               {Array.isArray(data?.news) && data.news.map((item, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{item.headline}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-primary">{item.headline}</CardTitle>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span className="font-semibold">{item.source}</span>
@@ -280,15 +174,15 @@ export default function Home() {
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Impact Analysis:</h4>
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Impact Analysis:</h4>
                         <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
                       </div>
-                      <div className="bg-gray-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Implications:</h4>
+                      <div className="bg-muted/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Technical Implications:</h4>
                         <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-gray-100 text-muted-foreground rounded-full">{item.category}</span>
+                        <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full">{item.category}</span>
                         <div className="flex items-center gap-3">
                           <div className="progress-bar flex-1">
                             <div 
@@ -312,22 +206,22 @@ export default function Home() {
               {Array.isArray(data?.insights) && data.insights.map((insight, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{insight.area}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-primary">{insight.area}</CardTitle>
                     <div className="space-y-4">
                       <p className="text-sm text-muted-foreground leading-relaxed">{insight.analysis}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Implications:</h4>
+                        <h4 className="font-semibold text-sm mb-3 text-primary">Implications:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(insight.implications) && insight.implications.map((imp, i) => (
                             <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                              <span className="text-blue-500 mt-1">•</span>
+                              <span className="text-primary mt-1">•</span>
                               {imp}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-gray-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Case Study:</h4>
+                      <div className="bg-muted/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Case Study:</h4>
                         <p className="text-sm text-muted-foreground">{insight.case_study}</p>
                       </div>
                       <div className="flex items-center gap-3">
@@ -336,7 +230,7 @@ export default function Home() {
                             className={`progress-bar-fill ${getProgressWidth(insight.confidence_score)}`}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-blue-700">
+                        <span className="text-sm font-semibold text-muted-foreground">
                           {(insight.confidence_score * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -352,7 +246,7 @@ export default function Home() {
               {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{trend.topic}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-primary">{trend.topic}</CardTitle>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <div className="progress-bar flex-1">
@@ -360,17 +254,17 @@ export default function Home() {
                             className={`progress-bar-fill ${getProgressWidth(trend.adoption_rate)}`}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-blue-700">
+                        <span className="text-sm font-semibold text-muted-foreground">
                           {(trend.adoption_rate * 100).toFixed(0)}%
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Key Metrics:</h4>
+                        <h4 className="font-semibold text-sm mb-3 text-primary">Key Metrics:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
                             <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                              <span className="text-blue-500 mt-1">•</span>
+                              <span className="text-primary mt-1">•</span>
                               {metric}
                             </li>
                           ))}
@@ -388,29 +282,29 @@ export default function Home() {
               {Array.isArray(data?.opportunities) && data.opportunities.map((opp, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{opp.domain}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-primary">{opp.domain}</CardTitle>
                     <div className="space-y-4">
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Potential:</h4>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{opp.technical_potential}</p>
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Technical Potential:</h4>
+                        <p className="text-sm text-muted-foreground">{opp.technical_potential}</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Requirements:</h4>
+                        <h4 className="font-semibold text-sm mb-2 text-primary">Requirements:</h4>
                         <ul className="list-none space-y-2">
                           {Array.isArray(opp.requirements) && opp.requirements.map((req, i) => (
                             <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                              <span className="text-blue-500 mt-1">•</span>
+                              <span className="text-primary mt-1">•</span>
                               {req}
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-gray-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">ROI Projection:</h4>
+                      <div className="bg-muted/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-primary">ROI Projection:</h4>
                         <p className="text-sm text-muted-foreground">{opp.roi_projection}</p>
                       </div>
                       <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-gray-100 text-muted-foreground rounded-full">
+                        <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full">
                           {opp.implementation_complexity}
                         </span>
                         <div className="flex items-center gap-3">
@@ -432,6 +326,7 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </div>
+
       {process.env.NODE_ENV === 'development' && (
         <DebugPanel data={data} loading={loading} error={error} />
       )}

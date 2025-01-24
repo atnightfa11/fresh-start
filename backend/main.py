@@ -338,45 +338,59 @@ class MarketIntelligence:
         }
         """
 
+        # Add in-memory cache
+        self.memory_cache = {}
+        self.memory_cache_timestamps = {}
+
     async def get_cached_data(self, redis):
         """Get data from cache if available and valid"""
-        if not redis:
-            return None
-            
-        try:
-            cached_data = await redis.get(self.cache_key)
-            if cached_data:
-                return json.loads(cached_data)
-        except Exception as e:
-            logger.error(f"Error reading from cache: {e}")
+        # Try Redis first
+        if redis:
+            try:
+                cached_data = await redis.get(self.cache_key)
+                if cached_data:
+                    return json.loads(cached_data)
+            except Exception as e:
+                logger.warning(f"Redis error, falling back to memory cache: {e}")
+        
+        # Fall back to memory cache
+        if self.cache_key in self.memory_cache:
+            cache_time = self.memory_cache_timestamps.get(self.cache_key, 0)
+            if time.time() - cache_time < self.cache_ttl:
+                return self.memory_cache[self.cache_key]
         return None
 
     async def set_cached_data(self, redis, data):
         """Set data in cache with TTL"""
-        if not redis:
-            return
-            
-        try:
-            await redis.setex(self.cache_key, self.cache_ttl, json.dumps(data))
-            await redis.set(self.last_fetch_key, str(time.time()))
-        except Exception as e:
-            logger.error(f"Error writing to cache: {e}")
+        # Try Redis first
+        if redis:
+            try:
+                await redis.setex(self.cache_key, self.cache_ttl, json.dumps(data))
+                await redis.set(self.last_fetch_key, str(time.time()))
+                return
+            except Exception as e:
+                logger.warning(f"Redis error, falling back to memory cache: {e}")
+        
+        # Fall back to memory cache
+        self.memory_cache[self.cache_key] = data
+        self.memory_cache_timestamps[self.cache_key] = time.time()
 
     async def should_fetch_new_data(self, redis):
         """Check if we should fetch new data based on last fetch time"""
-        if not redis:
-            return True
-            
-        try:
-            last_fetch = await redis.get(self.last_fetch_key)
-            if not last_fetch:
-                return True
-            
-            time_since_last_fetch = time.time() - float(last_fetch)
-            return time_since_last_fetch > self.min_fetch_interval
-        except Exception as e:
-            logger.error(f"Error checking last fetch time: {e}")
-            return True
+        # Try Redis first
+        if redis:
+            try:
+                last_fetch = await redis.get(self.last_fetch_key)
+                if last_fetch:
+                    time_since_last_fetch = time.time() - float(last_fetch)
+                    return time_since_last_fetch > self.min_fetch_interval
+            except Exception as e:
+                logger.warning(f"Redis error, falling back to memory cache: {e}")
+        
+        # Fall back to memory cache
+        last_fetch = self.memory_cache_timestamps.get(self.cache_key, 0)
+        time_since_last_fetch = time.time() - last_fetch
+        return time_since_last_fetch > self.min_fetch_interval
 
     async def get_intelligence(self):
         """Get AI marketing intelligence data with enhanced caching"""
