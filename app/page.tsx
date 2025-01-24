@@ -193,22 +193,21 @@ export default function Home() {
                   
                   return (
                     <Card key={index} className={cn(
-                      "bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300",
-                      isTrustedSource && "ring-1 ring-amber-200"
+                      "bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
                     )}>
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-4">
                           <CardTitle className="text-xl font-bold text-primary">{item.headline}</CardTitle>
                           <div className="flex gap-2">
                             {isRecent && (
-                              <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">New</span>
+                              <span className="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-full">New</span>
                             )}
                             {isTrustedSource && (
-                              <span className="px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-xs font-medium rounded-full flex items-center gap-1">
                                 <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
-                                Trusted
+                                Verified
                               </span>
                             )}
                           </div>
@@ -234,7 +233,7 @@ export default function Home() {
                               <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
                               <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
                             </div>
-                            <div className="bg-muted/50 rounded-lg p-4 border border-muted hover:shadow-md transition-all duration-300">
+                            <div className="bg-muted/50 rounded-lg p-4 border border-muted/50 hover:border-muted hover:bg-muted/60 transition-all duration-300">
                               <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
                               <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
                             </div>
@@ -250,7 +249,9 @@ export default function Home() {
           <TabsContent value="insights" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Array.isArray(data?.insights) && data.insights.map((insight, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                <Card key={index} className={cn(
+                  "bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
+                )}>
                   <div className="p-6">
                     <CardTitle className="text-xl font-bold text-primary mb-4">{insight.area}</CardTitle>
                     <div className="space-y-6">
@@ -266,10 +267,10 @@ export default function Home() {
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-4 border border-muted hover:shadow-md transition-all duration-300">
+                      <div className="bg-muted/50 rounded-lg p-4 border border-muted/50 hover:border-muted hover:bg-muted/60 transition-all duration-300">
                         <h4 className="font-semibold text-base mb-3 text-primary flex items-center gap-2">
                           Case Study
-                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-full">Real World Example</span>
+                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-full">Example</span>
                         </h4>
                         <p className="text-base leading-relaxed text-muted-foreground">{insight.case_study}</p>
                       </div>
