@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
-import { Brain, TrendingUp, Newspaper, Share2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Brain, TrendingUp, Newspaper, Share2, AlertCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { LoadingSkeleton } from '../components/loading-skeleton';
@@ -123,11 +123,11 @@ export default function Home() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <header className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-text mb-2">
+          <h1 className="text-4xl font-bold text-center bg-gradient-text mb-8">
             AI Marketing Intelligence Hub
           </h1>
-          <p className="text-base text-muted-foreground">
-            Latest Market Intelligence • Updated <time dateTime={new Date().toISOString()}>{new Date().toLocaleDateString()}</time>
+          <p className="text-center text-muted-foreground mb-12">
+            Latest Marketing Intelligence - Updated {new Date().toLocaleDateString()}
           </p>
         </div>
         <Button 
@@ -166,34 +166,33 @@ export default function Home() {
           <TabsContent value="news" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.isArray(data?.news) && data.news.map((item, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
+                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-primary">{item.headline}</CardTitle>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span className="font-semibold">{item.source}</span>
-                        <span>{item.date}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
-                      <div>
-                        <h4 className="font-semibold text-sm mb-2 text-primary">Impact Analysis:</h4>
-                        <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
-                      </div>
-                      <div className="bg-muted/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-primary">Technical Implications:</h4>
-                        <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
-                      </div>
+                    <CardTitle className="text-xl font-bold text-primary mb-4">{item.headline}</CardTitle>
+                    <div className="space-y-6">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full">{item.category}</span>
-                        <div className="flex items-center gap-3">
-                          <div className="progress-bar flex-1">
-                            <div 
-                              className={`progress-bar-fill ${getProgressWidth(item.relevance_score)}`}
-                            />
-                          </div>
-                          <span className="text-muted-foreground font-semibold">
-                            {(item.relevance_score * 100).toFixed(0)}%
-                          </span>
+                        <a 
+                          href={item.source_url || `https://www.google.com/search?q=${encodeURIComponent(item.source + ' ' + item.headline)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+                        >
+                          {item.source}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                        <time className="text-muted-foreground" dateTime={item.date}>
+                          {item.date}
+                        </time>
+                      </div>
+                      <p className="text-base leading-relaxed text-muted-foreground">{item.summary}</p>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
+                          <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
+                        </div>
+                        <div className="bg-muted/50 rounded-lg p-4">
+                          <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
+                          <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
                         </div>
                       </div>
                     </div>
@@ -206,35 +205,41 @@ export default function Home() {
           <TabsContent value="insights" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Array.isArray(data?.insights) && data.insights.map((insight, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
+                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-primary">{insight.area}</CardTitle>
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground leading-relaxed">{insight.analysis}</p>
+                    <CardTitle className="text-xl font-bold text-primary mb-4">{insight.area}</CardTitle>
+                    <div className="space-y-6">
+                      <p className="text-base leading-relaxed text-muted-foreground">{insight.analysis}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-primary">Implications:</h4>
-                        <ul className="list-none space-y-2">
+                        <h4 className="font-semibold text-base mb-3 text-primary">Key Implications</h4>
+                        <ul className="list-none space-y-3">
                           {Array.isArray(insight.implications) && insight.implications.map((imp, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <li key={i} className="text-base text-muted-foreground flex items-start gap-3">
                               <span className="text-primary mt-1">•</span>
-                              {imp}
+                              <span className="leading-relaxed">{imp}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-primary">Case Study:</h4>
-                        <p className="text-sm text-muted-foreground">{insight.case_study}</p>
+                        <h4 className="font-semibold text-base mb-3 text-primary">Case Study</h4>
+                        <p className="text-base leading-relaxed text-muted-foreground">{insight.case_study}</p>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <div className="progress-bar flex-1">
-                          <div 
-                            className={`progress-bar-fill ${getProgressWidth(insight.confidence_score)}`}
-                          />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground">Signal Strength:</span>
+                            <div className="progress-bar w-24">
+                              <div 
+                                className="h-2 bg-primary rounded-full transition-all duration-500"
+                                style={{ width: `${(insight.confidence_score * 100).toFixed(0)}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-medium text-muted-foreground">
+                              {(insight.confidence_score * 100).toFixed(0)}%
+                            </span>
+                          </div>
                         </div>
-                        <span className="text-sm font-semibold text-muted-foreground">
-                          {(insight.confidence_score * 100).toFixed(0)}%
-                        </span>
                       </div>
                     </div>
                   </div>
@@ -246,28 +251,30 @@ export default function Home() {
           <TabsContent value="trends" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
+                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-primary">{trend.topic}</CardTitle>
-                    <div className="space-y-4">
+                    <CardTitle className="text-xl font-bold text-primary mb-4">{trend.topic}</CardTitle>
+                    <div className="space-y-6">
                       <div className="flex items-center gap-3">
-                        <div className="progress-bar flex-1">
+                        <span className="text-sm font-medium text-muted-foreground">Adoption Rate:</span>
+                        <div className="progress-bar w-32">
                           <div 
-                            className={`progress-bar-fill ${getProgressWidth(trend.adoption_rate)}`}
+                            className="h-2 bg-primary rounded-full transition-all duration-500"
+                            style={{ width: `${(trend.adoption_rate * 100).toFixed(0)}%` }}
                           />
                         </div>
-                        <span className="text-sm font-semibold text-muted-foreground">
+                        <span className="text-sm font-medium text-muted-foreground">
                           {(trend.adoption_rate * 100).toFixed(0)}%
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
+                      <p className="text-base leading-relaxed text-muted-foreground">{trend.technical_details}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-primary">Key Metrics:</h4>
-                        <ul className="list-none space-y-2">
+                        <h4 className="font-semibold text-base mb-3 text-primary">Key Metrics</h4>
+                        <ul className="list-none space-y-3">
                           {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <li key={i} className="text-base text-muted-foreground flex items-start gap-3">
                               <span className="text-primary mt-1">•</span>
-                              {metric}
+                              <span className="leading-relaxed">{metric}</span>
                             </li>
                           ))}
                         </ul>
@@ -282,40 +289,42 @@ export default function Home() {
           <TabsContent value="opportunities" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {Array.isArray(data?.opportunities) && data.opportunities.map((opp, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
+                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-primary">{opp.domain}</CardTitle>
-                    <div className="space-y-4">
+                    <CardTitle className="text-xl font-bold text-primary mb-4">{opp.domain}</CardTitle>
+                    <div className="space-y-6">
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-primary">Technical Potential:</h4>
-                        <p className="text-sm text-muted-foreground">{opp.technical_potential}</p>
+                        <h4 className="font-semibold text-base mb-3 text-primary">Technical Potential</h4>
+                        <p className="text-base leading-relaxed text-muted-foreground">{opp.technical_potential}</p>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-sm mb-2 text-primary">Requirements:</h4>
-                        <ul className="list-none space-y-2">
+                        <h4 className="font-semibold text-base mb-3 text-primary">Requirements</h4>
+                        <ul className="list-none space-y-3">
                           {Array.isArray(opp.requirements) && opp.requirements.map((req, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <li key={i} className="text-base text-muted-foreground flex items-start gap-3">
                               <span className="text-primary mt-1">•</span>
-                              {req}
+                              <span className="leading-relaxed">{req}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                       <div className="bg-muted/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-primary">ROI Projection:</h4>
-                        <p className="text-sm text-muted-foreground">{opp.roi_projection}</p>
+                        <h4 className="font-semibold text-base mb-3 text-primary">ROI Projection</h4>
+                        <p className="text-base leading-relaxed text-muted-foreground">{opp.roi_projection}</p>
                       </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full">
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1.5 bg-muted text-sm font-medium text-muted-foreground rounded-full">
                           {opp.implementation_complexity}
                         </span>
                         <div className="flex items-center gap-3">
-                          <div className="progress-bar flex-1">
+                          <span className="text-sm font-medium text-muted-foreground">Market Readiness:</span>
+                          <div className="progress-bar w-32">
                             <div 
-                              className={`progress-bar-fill ${getProgressWidth(opp.market_readiness)}`}
+                              className="h-2 bg-primary rounded-full transition-all duration-500"
+                              style={{ width: `${(opp.market_readiness * 100).toFixed(0)}%` }}
                             />
                           </div>
-                          <span className="text-muted-foreground font-semibold">
+                          <span className="text-sm font-medium text-muted-foreground">
                             {(opp.market_readiness * 100).toFixed(0)}%
                           </span>
                         </div>

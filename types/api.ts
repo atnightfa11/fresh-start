@@ -15,12 +15,13 @@ export interface Insight {
 
 export interface NewsItem {
   headline: string;
-  category: string;
+  source: string;
+  source_url?: string;
+  date: string;
   summary: string;
   impact_analysis: string;
   technical_implications: string;
-  date: string;
-  source: string;
+  category: string;
   relevance_score: number;
 }
 
