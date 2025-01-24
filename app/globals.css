@@ -4,17 +4,29 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
   --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --ring: #93c5fd;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f3f4f6;
+  --accent-foreground: #1a1a1a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #2563eb;
+  --radius: 0.5rem;
 }
 
 .bg-gradient-text {
-  background: linear-gradient(to right, #2563eb, #4f46e5);
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -22,6 +34,13 @@
 
 .bg-gradient-card {
   background: linear-gradient(to bottom right, #ffffff, #f8fafc);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.bg-gradient-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border-color: #2563eb20;
 }
 
 .animate-loading {
@@ -33,7 +52,26 @@
   100% { transform: translateX(200%); }
 }
 
+.progress-bar {
+  @apply h-2 rounded-full overflow-hidden bg-muted;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-primary rounded-full transition-all duration-500;
+}
+
+.card-title {
+  @apply text-xl font-semibold tracking-tight text-primary mb-3;
+}
+
+.card-content {
+  @apply space-y-4;
+}
+
+.tag {
+  @apply px-3 py-1 bg-muted text-primary rounded-full font-medium text-sm;
+}
+
 body {
-  color: var(--foreground);
-  background: var(--background);
+  @apply bg-background text-foreground antialiased;
 }

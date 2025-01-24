@@ -152,11 +152,22 @@ export default function Home() {
           <p className="text-base text-muted-foreground mt-2">
             Loading your personalized market insights...
           </p>
-          <div className="w-full h-1 bg-blue-100 rounded-full mt-4 overflow-hidden">
-            <div className="h-full bg-blue-600 rounded-full w-1/3 animate-loading"></div>
+          <div className="progress-bar mt-4">
+            <div className="progress-bar-fill animate-loading"></div>
           </div>
         </div>
-        <LoadingSkeleton />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="bg-gradient-card rounded-lg p-6 space-y-4 animate-pulse">
+              <div className="h-6 bg-muted rounded w-3/4"></div>
+              <div className="space-y-3">
+                <div className="h-2 bg-muted rounded"></div>
+                <div className="h-2 bg-muted rounded w-5/6"></div>
+                <div className="h-2 bg-muted rounded w-4/6"></div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
