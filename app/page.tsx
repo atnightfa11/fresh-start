@@ -181,7 +181,7 @@ export default function Home() {
                           <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
                           <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
                         </div>
-                        <div className="bg-muted/50 rounded-lg p-4">
+                        <div className="bg-muted/50 rounded-lg p-4 border border-muted">
                           <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
                           <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
                         </div>
@@ -212,21 +212,21 @@ export default function Home() {
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-4">
+                      <div className="bg-muted/50 rounded-lg p-4 border border-muted">
                         <h4 className="font-semibold text-base mb-3 text-primary">Case Study</h4>
                         <p className="text-base leading-relaxed text-muted-foreground">{insight.case_study}</p>
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-muted-foreground">Signal Strength:</span>
-                            <div className="progress-bar w-24">
+                            <span className="text-sm font-medium text-primary">Signal Strength:</span>
+                            <div className="bg-muted rounded-full h-2 w-24">
                               <div 
-                                className="h-2 bg-primary rounded-full transition-all duration-500"
+                                className="h-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-500"
                                 style={{ width: `${(insight.confidence_score * 100).toFixed(0)}%` }}
                               />
                             </div>
-                            <span className="text-sm font-medium text-muted-foreground">
+                            <span className="text-sm font-medium text-amber-600">
                               {(insight.confidence_score * 100).toFixed(0)}%
                             </span>
                           </div>
@@ -300,7 +300,7 @@ export default function Home() {
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-4">
+                      <div className="bg-muted/50 rounded-lg p-4 border border-muted">
                         <h4 className="font-semibold text-base mb-3 text-primary">ROI Projection</h4>
                         <p className="text-base leading-relaxed text-muted-foreground">{opp.roi_projection}</p>
                       </div>
