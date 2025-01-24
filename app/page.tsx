@@ -7,11 +7,12 @@ import { Brain, TrendingUp, Newspaper, Share2, AlertCircle, RefreshCw } from 'lu
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 import { LoadingSkeleton } from '../components/loading-skeleton';
+import type { MarketIntelligenceData } from '../types/api';
 
 const useMarketingData = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<MarketIntelligenceData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -38,7 +39,7 @@ const useMarketingData = () => {
       }
 
       try {
-        const responseData = JSON.parse(responseText);
+        const responseData = JSON.parse(responseText) as MarketIntelligenceData;
         console.log('Successfully parsed response data');
         console.log('Data structure:', {
           hasTrends: Boolean(responseData.trends),
@@ -73,7 +74,7 @@ const useMarketingData = () => {
       }
     } catch (error) {
       console.error('Error in fetchData:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
       setData(null);
     } finally {
       setLoading(false);
@@ -93,7 +94,13 @@ const useMarketingData = () => {
   return { data, loading, error, refetch };
 };
 
-const DebugPanel = ({ data, loading, error }) => {
+interface DebugPanelProps {
+  data: MarketIntelligenceData | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const DebugPanel = ({ data, loading, error }: DebugPanelProps) => {
   if (process.env.NODE_ENV !== 'development') return null;
   
   return (
