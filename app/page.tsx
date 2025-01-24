@@ -146,14 +146,14 @@ export default function Home() {
     return (
       <div className="p-4 md:p-10 mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent animate-pulse">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text">
             AI Marketing Intelligence Hub
           </h1>
           <p className="text-base text-muted-foreground mt-2">
             Loading your personalized market insights...
           </p>
           <div className="w-full h-1 bg-blue-100 rounded-full mt-4 overflow-hidden">
-            <div className="h-full bg-blue-600 rounded-full w-1/3 animate-[loading_1s_ease-in-out_infinite]"></div>
+            <div className="h-full bg-blue-600 rounded-full w-1/3 animate-loading"></div>
           </div>
         </div>
         <LoadingSkeleton />
@@ -214,7 +214,7 @@ export default function Home() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <div className="mb-8 flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text">
             AI Marketing Intelligence Hub
           </h1>
           <p className="text-base text-muted-foreground">
@@ -236,7 +236,7 @@ export default function Home() {
                 value={value}
                 className={cn(
                   "flex-1 flex items-center gap-2 py-2 px-4",
-                  "data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm",
+                  "data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm",
                   "transition-all duration-200"
                 )}
               >
@@ -249,26 +249,26 @@ export default function Home() {
           <TabsContent value="trends" className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
-                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-to-br from-white to-blue-50/50">
-                  <CardTitle className="text-xl mb-3 text-blue-900">{trend.topic}</CardTitle>
+                <Card key={index} className="p-6 hover:shadow-lg transition-shadow duration-200 border-none bg-gradient-card">
+                  <CardTitle className="text-xl mb-3 text-primary">{trend.topic}</CardTitle>
                   <div className="space-y-4">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 flex-1 bg-blue-100 rounded-full overflow-hidden">
+                      <div className="h-2 flex-1 bg-muted rounded-full overflow-hidden">
                         <div 
-                          className={`h-full bg-blue-600 rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
+                          className={`h-full bg-primary rounded-full transition-all duration-500 ${getProgressWidth(trend.adoption_rate)}`}
                         />
                       </div>
-                      <span className="text-sm font-medium text-blue-600">
+                      <span className="text-sm font-medium text-primary">
                         {(trend.adoption_rate * 100).toFixed(0)}%
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed">{trend.technical_details}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
                     <div>
-                      <h4 className="font-semibold text-sm mb-2 text-blue-900">Key Metrics:</h4>
+                      <h4 className="font-semibold text-sm mb-2 text-primary">Key Metrics:</h4>
                       <ul className="list-none space-y-1">
                         {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
-                          <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
-                            <span className="text-blue-500 mt-1">•</span>
+                          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <span className="text-primary mt-1">•</span>
                             {metric}
                           </li>
                         ))}
