@@ -84,8 +84,6 @@ const DebugPanel = ({ data, loading, error }: DebugPanelProps) => {
   );
 };
 
-const getProgressWidth = (value: number) => `w-[${(value * 100).toFixed(0)}%]`;
-
 export default function Home() {
   const { data, loading, error, refetch } = useMarketingData();
   const [activeTab, setActiveTab] = useState('news');
