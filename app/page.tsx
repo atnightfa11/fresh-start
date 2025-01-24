@@ -126,7 +126,7 @@ const getProgressWidth = (value: number) => `w-[${(value * 100).toFixed(0)}%]`;
 
 export default function Home() {
   const { data, loading, error, refetch } = useMarketingData();
-  const [activeTab, setActiveTab] = useState('trends');
+  const [activeTab, setActiveTab] = useState('news');
 
   // Debug logging
   useEffect(() => {
@@ -136,9 +136,9 @@ export default function Home() {
   }, [data, loading, error]);
 
   const tabItems = [
-    { value: 'trends', icon: TrendingUp, label: 'Trends' },
-    { value: 'insights', icon: Brain, label: 'Insights' },
     { value: 'news', icon: Newspaper, label: 'News' },
+    { value: 'insights', icon: Brain, label: 'Insights' },
+    { value: 'trends', icon: TrendingUp, label: 'Trends' },
     { value: 'opportunities', icon: Share2, label: 'Opportunities' },
   ];
 
@@ -146,24 +146,28 @@ export default function Home() {
     return (
       <div className="p-4 md:p-10 mx-auto max-w-7xl">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-text animate-pulse">
             AI Marketing Intelligence Hub
           </h1>
-          <p className="text-base text-muted-foreground mt-2">
+          <p className="text-base text-muted-foreground mt-2 animate-pulse">
             Loading your personalized market insights...
           </p>
-          <div className="progress-bar mt-4">
+          <div className="progress-bar mt-6">
             <div className="progress-bar-fill animate-loading"></div>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-gradient-card rounded-lg p-6 space-y-4">
-              <div className="h-6 bg-muted/50 rounded w-3/4 animate-pulse"></div>
+            <div key={i} className="bg-gradient-card rounded-xl p-6 space-y-4">
+              <div className="h-7 bg-muted/50 rounded-lg w-3/4 animate-pulse"></div>
               <div className="space-y-3">
-                <div className="h-2 bg-muted/50 rounded animate-pulse"></div>
-                <div className="h-2 bg-muted/50 rounded w-5/6 animate-pulse"></div>
-                <div className="h-2 bg-muted/50 rounded w-4/6 animate-pulse"></div>
+                <div className="h-2.5 bg-muted/50 rounded-full animate-pulse"></div>
+                <div className="h-2.5 bg-muted/50 rounded-full w-5/6 animate-pulse"></div>
+                <div className="h-2.5 bg-muted/50 rounded-full w-4/6 animate-pulse"></div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <div className="h-2 w-full bg-muted/50 rounded-full animate-pulse"></div>
+                <div className="h-5 w-12 bg-muted/50 rounded-full animate-pulse"></div>
               </div>
             </div>
           ))}
@@ -176,21 +180,21 @@ export default function Home() {
     return (
       <div className="p-4 md:p-10 mx-auto max-w-7xl">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-semibold tracking-tight">
+          <h1 className="text-3xl font-semibold tracking-tight bg-gradient-text">
             AI Marketing Intelligence Hub
           </h1>
-          <Button onClick={refetch} className="gap-2">
-            <RefreshCw />
+          <Button onClick={refetch} variant="outline" size="lg" className="gap-2">
+            <RefreshCw className="h-4 w-4" />
             Retry
           </Button>
         </div>
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="animate-in fade-in-50">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="mt-2">
             <div className="font-semibold">Error loading data:</div>
             <div className="mt-1">{error}</div>
             <div className="mt-2 text-sm">
-              Please check the browser console for more details or try refreshing the page.
+              Please check your connection or try refreshing the page.
             </div>
           </AlertDescription>
         </Alert>
@@ -236,7 +240,7 @@ export default function Home() {
           onClick={refetch} 
           variant="outline" 
           size="lg"
-          className="gap-2 bg-white/80 hover:bg-white/90 border-blue-100"
+          className="gap-2 bg-white/80 hover:bg-white/90 border-blue-100 transition-all duration-300"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
@@ -254,7 +258,7 @@ export default function Home() {
                   "flex-1 flex items-center justify-center gap-2 py-2.5 px-4",
                   "data-[state=active]:bg-gradient-to-b data-[state=active]:from-white data-[state=active]:to-blue-50/30",
                   "data-[state=active]:text-blue-700 data-[state=active]:shadow-md",
-                  "rounded-lg transition-all duration-200"
+                  "rounded-lg transition-all duration-200 hover:bg-white/50"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -263,34 +267,38 @@ export default function Home() {
             ))}
           </TabsList>
 
-          <TabsContent value="trends" className="mt-8">
+          <TabsContent value="news" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
+              {Array.isArray(data?.news) && data.news.map((item, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{trend.topic}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-blue-900">{item.headline}</CardTitle>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="progress-bar flex-1">
-                          <div 
-                            className={`progress-bar-fill ${getProgressWidth(trend.adoption_rate)}`}
-                          />
-                        </div>
-                        <span className="text-sm font-semibold text-blue-700">
-                          {(trend.adoption_rate * 100).toFixed(0)}%
-                        </span>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span className="font-semibold">{item.source}</span>
+                        <span>{item.date}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
                       <div>
-                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Key Metrics:</h4>
-                        <ul className="list-none space-y-2">
-                          {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
-                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                              <span className="text-blue-500 mt-1">•</span>
-                              {metric}
-                            </li>
-                          ))}
-                        </ul>
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Impact Analysis:</h4>
+                        <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
+                      </div>
+                      <div className="bg-gray-100/50 rounded-lg p-4">
+                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Implications:</h4>
+                        <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="px-3 py-1 bg-gray-100 text-muted-foreground rounded-full">{item.category}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="progress-bar flex-1">
+                            <div 
+                              className={`progress-bar-fill ${getProgressWidth(item.relevance_score)}`}
+                            />
+                          </div>
+                          <span className="text-muted-foreground font-semibold">
+                            {(item.relevance_score * 100).toFixed(0)}%
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -339,38 +347,34 @@ export default function Home() {
             </div>
           </TabsContent>
 
-          <TabsContent value="news" className="mt-8">
+          <TabsContent value="trends" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.isArray(data?.news) && data.news.map((item, index) => (
+              {Array.isArray(data?.trends) && data.trends.map((trend, index) => (
                 <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden">
                   <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-blue-900">{item.headline}</CardTitle>
+                    <CardTitle className="text-xl font-bold text-blue-900">{trend.topic}</CardTitle>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span className="font-semibold">{item.source}</span>
-                        <span>{item.date}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{item.summary}</p>
-                      <div>
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Impact Analysis:</h4>
-                        <p className="text-sm text-muted-foreground">{item.impact_analysis}</p>
-                      </div>
-                      <div className="bg-gray-100/50 rounded-lg p-4">
-                        <h4 className="font-semibold text-sm mb-2 text-blue-900">Technical Implications:</h4>
-                        <p className="text-sm text-muted-foreground">{item.technical_implications}</p>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="px-3 py-1 bg-gray-100 text-muted-foreground rounded-full">{item.category}</span>
-                        <div className="flex items-center gap-3">
-                          <div className="progress-bar flex-1">
-                            <div 
-                              className={`progress-bar-fill ${getProgressWidth(item.relevance_score)}`}
-                            />
-                          </div>
-                          <span className="text-muted-foreground font-semibold">
-                            {(item.relevance_score * 100).toFixed(0)}%
-                          </span>
+                      <div className="flex items-center gap-3">
+                        <div className="progress-bar flex-1">
+                          <div 
+                            className={`progress-bar-fill ${getProgressWidth(trend.adoption_rate)}`}
+                          />
                         </div>
+                        <span className="text-sm font-semibold text-blue-700">
+                          {(trend.adoption_rate * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{trend.technical_details}</p>
+                      <div>
+                        <h4 className="font-semibold text-sm mb-3 text-blue-900">Key Metrics:</h4>
+                        <ul className="list-none space-y-2">
+                          {Array.isArray(trend.metrics) && trend.metrics.map((metric, i) => (
+                            <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                              <span className="text-blue-500 mt-1">•</span>
+                              {metric}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -428,7 +432,9 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </div>
-      <DebugPanel data={data} loading={loading} error={error} />
+      {process.env.NODE_ENV === 'development' && (
+        <DebugPanel data={data} loading={loading} error={error} />
+      )}
     </main>
   );
 }

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',
   poweredByHeader: false,
   reactStrictMode: true,
   swcMinify: true,
@@ -8,6 +8,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   images: {
+    unoptimized: true,
     domains: ['localhost'],
   },
   webpack: (config) => {
@@ -17,26 +18,14 @@ const nextConfig = {
     };
     return config;
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/:path*'
-      }
-    ];
+  trailingSlash: true,
+  distDir: 'out',
+  generateBuildId: async () => {
+    return 'build-' + new Date().toISOString().split('T')[0];
   },
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
+  serverRuntimeConfig: {},
+  publicRuntimeConfig: {
+    apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://ai-marketing-hub-backend.onrender.com',
   },
 };
 
