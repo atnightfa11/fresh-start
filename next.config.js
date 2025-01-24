@@ -5,22 +5,12 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   reactStrictMode: true,
-  basePath: '/ai-marketing',
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': '.',
     };
     return config;
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/ai-marketing',
-        permanent: true,
-      },
-    ];
   },
   publicRuntimeConfig: {
     apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://ai-marketing-hub-backend.onrender.com',
