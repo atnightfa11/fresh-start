@@ -26,10 +26,8 @@ const useMarketingData = () => {
       const response = await fetch(`${apiUrl}/api/market-intelligence`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-          'Origin': process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://ai-marketing-hub-frontend.onrender.com'
-        },
-        credentials: 'include'
+          'Accept': 'application/json'
+        }
       });
       
       console.log('Response status:', response.status);
