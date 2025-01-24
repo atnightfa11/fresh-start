@@ -156,40 +156,58 @@ export default function Home() {
 
           <TabsContent value="news" className="mt-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.isArray(data?.news) && data.news.map((item, index) => (
-                <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
-                  <div className="p-6">
-                    <CardTitle className="text-xl font-bold text-primary mb-4">{item.headline}</CardTitle>
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between text-sm">
-                        <a 
-                          href={item.source_url || `https://www.google.com/search?q=${encodeURIComponent(item.source + ' ' + item.headline)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
-                        >
-                          {item.source}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                        <time className="text-muted-foreground" dateTime={item.date}>
-                          {item.date}
-                        </time>
-                      </div>
-                      <p className="text-base leading-relaxed text-muted-foreground">{item.summary}</p>
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
-                          <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
+              {Array.isArray(data?.news) && data.news
+                .filter(item => {
+                  const newsDate = new Date(item.date);
+                  const threeMonthsAgo = new Date();
+                  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+                  return newsDate >= threeMonthsAgo;
+                })
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .map((item, index) => {
+                  const newsDate = new Date(item.date);
+                  const isRecent = new Date().getTime() - newsDate.getTime() < 7 * 24 * 60 * 60 * 1000; // 7 days
+                  
+                  return (
+                    <Card key={index} className="bg-gradient-card rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <CardTitle className="text-xl font-bold text-primary">{item.headline}</CardTitle>
+                          {isRecent && (
+                            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">New</span>
+                          )}
                         </div>
-                        <div className="bg-muted/50 rounded-lg p-4 border border-muted">
-                          <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
-                          <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
+                        <div className="space-y-6">
+                          <div className="flex items-center justify-between text-sm">
+                            <a 
+                              href={item.source_url || `https://www.google.com/search?q=${encodeURIComponent(item.source + ' ' + item.headline)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-2"
+                            >
+                              {item.source}
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                            <time className="text-muted-foreground" dateTime={item.date}>
+                              {item.date}
+                            </time>
+                          </div>
+                          <p className="text-base leading-relaxed text-muted-foreground">{item.summary}</p>
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
+                              <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
+                            </div>
+                            <div className="bg-muted/50 rounded-lg p-4 border border-muted">
+                              <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
+                              <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                    </Card>
+                  );
+                })}
             </div>
           </TabsContent>
 
