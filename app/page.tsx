@@ -27,7 +27,9 @@ const useMarketingData = () => {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
+          'Origin': process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://ai-marketing-hub-frontend.onrender.com'
         },
+        credentials: 'include'
       });
       
       console.log('Response status:', response.status);
