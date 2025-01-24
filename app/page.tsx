@@ -234,7 +234,7 @@ export default function Home() {
                               <h4 className="font-semibold text-base mb-2 text-primary">Impact Analysis</h4>
                               <p className="text-base leading-relaxed text-muted-foreground">{item.impact_analysis}</p>
                             </div>
-                            <div className="bg-muted/50 rounded-lg p-4 border border-muted">
+                            <div className="bg-muted/50 rounded-lg p-4 border border-muted hover:shadow-md transition-all duration-300">
                               <h4 className="font-semibold text-base mb-2 text-primary">Technical Implications</h4>
                               <p className="text-base leading-relaxed text-muted-foreground">{item.technical_implications}</p>
                             </div>
@@ -266,8 +266,11 @@ export default function Home() {
                           ))}
                         </ul>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-4 border border-muted">
-                        <h4 className="font-semibold text-base mb-3 text-primary">Case Study</h4>
+                      <div className="bg-muted/50 rounded-lg p-4 border border-muted hover:shadow-md transition-all duration-300">
+                        <h4 className="font-semibold text-base mb-3 text-primary flex items-center gap-2">
+                          Case Study
+                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-full">Real World Example</span>
+                        </h4>
                         <p className="text-base leading-relaxed text-muted-foreground">{insight.case_study}</p>
                       </div>
                       <div className="flex items-center justify-between">
@@ -276,11 +279,11 @@ export default function Home() {
                             <span className="text-sm font-medium text-primary">Signal Strength:</span>
                             <div className="bg-muted rounded-full h-2 w-24">
                               <div 
-                                className="h-2 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-500"
+                                className="h-2 bg-[#FF1A1A] rounded-full transition-all duration-500"
                                 style={{ width: `${(insight.confidence_score * 100).toFixed(0)}%` }}
                               />
                             </div>
-                            <span className="text-sm font-medium text-amber-600">
+                            <span className="text-sm font-medium text-[#FF1A1A]">
                               {(insight.confidence_score * 100).toFixed(0)}%
                             </span>
                           </div>
@@ -305,11 +308,11 @@ export default function Home() {
                         <span className="text-sm font-medium text-muted-foreground">Adoption Rate:</span>
                         <div className="progress-bar w-32">
                           <div 
-                            className="h-2 bg-primary rounded-full transition-all duration-500"
+                            className="h-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
                             style={{ width: `${(trend.adoption_rate * 100).toFixed(0)}%` }}
                           />
                         </div>
-                        <span className="text-sm font-medium text-muted-foreground">
+                        <span className="text-sm font-medium text-blue-600">
                           {(trend.adoption_rate * 100).toFixed(0)}%
                         </span>
                       </div>
@@ -366,11 +369,11 @@ export default function Home() {
                           <span className="text-sm font-medium text-muted-foreground">Market Readiness:</span>
                           <div className="progress-bar w-32">
                             <div 
-                              className="h-2 bg-primary rounded-full transition-all duration-500"
+                              className="h-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full transition-all duration-500"
                               style={{ width: `${(opp.market_readiness * 100).toFixed(0)}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-muted-foreground">
+                          <span className="text-sm font-medium text-emerald-600">
                             {(opp.market_readiness * 100).toFixed(0)}%
                           </span>
                         </div>
