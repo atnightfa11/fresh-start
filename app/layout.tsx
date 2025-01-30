@@ -1,46 +1,45 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
+import { Inter } from "next/font/google";
+import "../styles/globals.css";
 import Script from "next/script";
+import { ThemeProvider } from "@/providers/theme-provider";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "AI Marketing Intelligence Hub | Real-time Marketing Insights",
-  description: "Access real-time AI-powered marketing intelligence, trends analysis, and strategic insights. Stay ahead with data-driven marketing decisions and industry opportunities.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'),
+  title: "Neural Signal - Real-time AI Marketing Intelligence",
+  description: "Track AI marketing trends in real-time",
   keywords: "AI marketing, marketing intelligence, market trends, marketing insights, AI analytics, marketing opportunities",
   authors: [{ name: "Heather Grass" }],
   openGraph: {
-    title: "AI Marketing Intelligence Hub | Real-time Marketing Insights",
-    description: "Access real-time AI-powered marketing intelligence, trends analysis, and strategic insights. Stay ahead with data-driven marketing decisions and industry opportunities.",
-    url: "https://heathergrass.com/ai-marketing",
-    siteName: "AI Marketing Intelligence Hub",
+    title: "Neural Signal - AI Marketing Intelligence",
+    description: "Track AI marketing trends in real-time",
+    url: '/',
+    siteName: 'Neural Signal',
     images: [
       {
-        url: "/og-image.png",
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: "AI Marketing Intelligence Hub Dashboard",
-      },
+        alt: 'Neural Signal - AI Marketing Intelligence'
+      }
     ],
-    locale: "en_US",
-    type: "website",
+    locale: 'en_US',
+    type: 'website',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "AI Marketing Intelligence Hub | Real-time Marketing Insights",
-    description: "Access real-time AI-powered marketing intelligence, trends analysis, and strategic insights.",
-    images: ["/og-image.png"],
+    card: 'summary_large_image',
+    title: 'Neural Signal - AI Marketing Intelligence',
+    description: 'Track AI marketing trends in real-time',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -60,11 +59,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <Script
           defer
@@ -103,10 +102,24 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans min-h-screen bg-background`}>
-        <main className="min-h-screen bg-gradient-to-b from-white to-gray-50/50">
-          {children}
-        </main>
+      <body className={`${inter.className} font-sans min-h-screen bg-background`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+              <ScrollToTop />
+            </div>
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

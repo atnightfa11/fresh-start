@@ -1,4 +1,3 @@
-export * from './alert'
-export * from './button'
-export * from './card'
-export * from './tabs' 
+export * from './card';
+export * from './alert';
+export * from './button'; 
