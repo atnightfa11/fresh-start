@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: "Neural Signal - Real-time AI Marketing Intelligence",
   description: "Track AI marketing trends in real-time",
   keywords: "AI marketing, marketing intelligence, market trends, marketing insights, AI analytics, marketing opportunities",

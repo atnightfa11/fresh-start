@@ -1,81 +1,75 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { TrendChart } from './TrendChart';
-import { LoadingChart } from './LoadingChart';
-import { fetchMarketingData } from '@/lib/api';
-import { MarketIntelligenceData } from '@/types/api';
+import { motion } from "framer-motion";
+import { Sparklines, SparklinesLine } from "react-sparklines";
+import { MarketIntelligenceData } from "@/types/api";
 
-interface MetricData {
-  date: string;
-  value: number;
+const metricVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+interface LiveMetricsProps {
+  data: MarketIntelligenceData;
 }
 
-export default function LiveMetrics() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<MetricData[]>([]);
-  const [metrics, setMetrics] = useState({
-    engagement: 0,
-    conversion: 0
-  });
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        const apiData = await fetchMarketingData();
-        
-        // Transform search trends into chart data
-        const trendData = apiData.search_trends?.map((trend, index) => ({
-          date: new Date(Date.now() - (index * 30 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 7),
-          value: trend.growth
-        })) || [];
-
-        setData(trendData);
-
-        // Calculate average metrics
-        const avgEngagement = apiData.trends?.reduce((acc, curr) => acc + curr.impact_score, 0) / (apiData.trends?.length || 1);
-        const avgConversion = avgEngagement * 0.4; // Example conversion calculation
-
-        setMetrics({
-          engagement: Number(avgEngagement.toFixed(1)),
-          conversion: Number(avgConversion.toFixed(1))
-        });
-
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load metrics');
-        console.error('Error loading metrics:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  if (loading) {
-    return <LoadingChart />;
-  }
-
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
-
+export default function LiveMetrics({ data }: LiveMetricsProps) {
   return (
-    <div className="space-y-4">
-      <TrendChart data={data} />
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 rounded-lg bg-[var(--color-surface)]">
-          <div className="text-sm text-gray-400">Engagement Rate</div>
-          <div className="text-2xl font-semibold">{metrics.engagement}%</div>
-          <div className="text-sm text-green-400">+{(metrics.engagement * 0.1).toFixed(1)}%</div>
-        </div>
-        <div className="p-4 rounded-lg bg-[var(--color-surface)]">
-          <div className="text-sm text-gray-400">Conversion Rate</div>
-          <div className="text-2xl font-semibold">{metrics.conversion}%</div>
-          <div className="text-sm text-green-400">+{(metrics.conversion * 0.1).toFixed(1)}%</div>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold text-foreground">
+        Performance Metrics
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {data.metrics.map((metric, index) => (
+          <motion.div
+            key={metric.name}
+            variants={metricVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: index * 0.1 }}
+            className="bg-gradient-to-br from-card to-muted/20 p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-medium text-foreground/80">{metric.name}</h3>
+              <span className={`text-sm ${
+                metric.change >= 0 ? 'text-green-500' : 'text-red-500'
+              }`}>
+                {metric.change >= 0 ? '+' : ''}{metric.change.toFixed(1)}%
+              </span>
+            </div>
+            
+            <div className="flex items-end justify-between">
+              <p className="text-3xl font-bold text-foreground">
+                {metric.value.toFixed(1)}%
+              </p>
+              <div className="w-24 h-12">
+                <Sparklines 
+                  data={metric.trend_data} 
+                  width={96} 
+                  height={48}
+                >
+                  <SparklinesLine 
+                    color={metric.change >= 0 ? "#10b981" : "#ef4444"} 
+                    style={{ strokeWidth: 2, fillOpacity: 0.1 }}
+                  />
+                </Sparklines>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="pt-6 border-t border-border/50">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+          <div className="flex items-center space-x-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span>Live data</span>
+          </div>
         </div>
       </div>
     </div>

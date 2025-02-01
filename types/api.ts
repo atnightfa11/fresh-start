@@ -35,24 +35,32 @@ export interface Opportunity {
 }
 
 export interface MarketIntelligenceData {
-  search_trends: Array<{
-    term: string;
-    growth: number;
-    industry?: string;
-    region: string[];
-    sentiment?: 'positive' | 'negative' | 'neutral';
-  }>;
   trends: Array<{
     title: string;
     description: string;
     impact_score: number;
     category: string;
+    first_seen: Date;
+    last_updated: Date;
+  }>;
+  search_trends: Array<{
+    term: string;
+    growth: number;
+    date: string;
+    industry: string;
+    region: string[];
   }>;
   insights: Array<{
     title: string;
     content: string;
     confidence: number;
     source?: string;
+  }>;
+  metrics: Array<{
+    name: string;
+    value: number;
+    change: number;
+    trend_data: number[];
   }>;
   news: Array<{
     title: string;
@@ -67,4 +75,4 @@ export interface MarketIntelligenceData {
     potential_impact: number;
     difficulty: 'low' | 'medium' | 'high';
   }>;
-} 
+}

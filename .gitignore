@@ -26,6 +26,8 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.development
+.env.production
 
 # vercel
 .vercel
@@ -39,3 +41,11 @@ __pycache__/
 *.py[cod]
 .env
 venv/
+.venv/
+
+# Editor
+.vscode/
+.idea/
+
+# Redis
+*.rdb

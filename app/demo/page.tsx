@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import TrendingTopics from '@/components/TrendingTopics';
 import LiveMetrics from '@/components/LiveMetrics';
+import { sampleMarketData } from '@/lib/sampleData';
 
 export default function DemoPage() {
   return (
@@ -21,7 +22,7 @@ export default function DemoPage() {
               <CardTitle>Trending AI Topics</CardTitle>
             </CardHeader>
             <CardContent>
-              <TrendingTopics />
+              <TrendingTopics data={sampleMarketData} />
             </CardContent>
           </Card>
           
@@ -30,7 +31,7 @@ export default function DemoPage() {
               <CardTitle>Performance Metrics</CardTitle>
             </CardHeader>
             <CardContent>
-              <LiveMetrics />
+              <LiveMetrics data={sampleMarketData} />
             </CardContent>
           </Card>
         </div>

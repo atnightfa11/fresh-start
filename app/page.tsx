@@ -9,7 +9,18 @@ import { LoadingSkeleton } from '@/components/loading-skeleton';
 import type { MarketIntelligenceData } from '../types/api';
 import TrendingTopics from '@/components/TrendingTopics';
 import LiveMetrics from '@/components/LiveMetrics';
-import { fetchMarketingData } from '@/lib/api';
+import { fetchSonarData } from "@/lib/sonar";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 const useMarketingData = () => {
   const [data, setData] = useState<MarketIntelligenceData | null>(null);
@@ -103,83 +114,59 @@ const TRUSTED_SOURCES = [
 ];
 
 export default function Home() {
-  const { data, loading, error, refetch } = useMarketingData();
+  const [data, setData] = useState<MarketIntelligenceData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const sonarData = await fetchSonarData();
+        setData(sonarData);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleGetStarted = () => {
     // Add your onboarding logic here
     console.log('Get Started clicked');
   };
 
-  if (loading) {
-    return <LoadingSkeleton />;
-  }
-
   if (error) {
     return (
-      <Alert variant="destructive" className="max-w-2xl mx-auto mt-8">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>
-          {error}
-        </AlertDescription>
-      </Alert>
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        {error}
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-center mb-6 bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
-            AI marketing moves fast.
-            <br />
-            We track it in real-time.
-          </h1>
-          <p className="text-gray-400 text-center text-xl mb-8 max-w-2xl mx-auto">
-            Stay ahead of AI trends with live insights, performance metrics, and strategic intelligence.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button variant="default" onClick={handleGetStarted}>
-              Get Real-Time Insights
-            </Button>
-            <Button variant="secondary" onClick={() => window.open('/demo', '_blank')}>
-              View Live Demo
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Data Grid Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Trending AI Topics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TrendingTopics />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <LiveMetrics />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Latest Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              Coming soon...
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+    <div className="min-h-screen pt-24 px-4">
+      <div className="max-w-7xl mx-auto">
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : data ? (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-12"
+            >
+              <TrendingTopics data={data} />
+              <LiveMetrics data={data} />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

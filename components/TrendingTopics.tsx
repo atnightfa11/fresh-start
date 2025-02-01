@@ -1,69 +1,70 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { TrendChart } from './TrendChart';
-import { fetchMarketingData } from '@/lib/api';
-import { MarketIntelligenceData } from '@/types/api';
-import { LoadingChart } from './LoadingChart';
+import { motion } from "framer-motion";
+import { ArrowUpRight, TrendingUp } from "lucide-react";
+import { MarketIntelligenceData } from "@/types/api";
 
-interface TrendData {
-  date: string;
-  value: number;
+const trendVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.05 }
+  }),
+};
+
+interface TrendingTopicsProps {
+  data: MarketIntelligenceData;
 }
 
-export default function TrendingTopics() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [trends, setTrends] = useState<MarketIntelligenceData['trends']>([]);
-  const [chartData, setChartData] = useState<TrendData[]>([]);
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        const data = await fetchMarketingData();
-        
-        // Set trends
-        setTrends(data.trends || []);
-
-        // Transform search trends into chart data
-        const searchTrendData = data.search_trends?.map((trend, index) => ({
-          date: new Date(Date.now() - (index * 30 * 24 * 60 * 60 * 1000)).toISOString().slice(0, 7),
-          value: trend.growth
-        })) || [];
-
-        setChartData(searchTrendData);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load trends');
-        console.error('Error loading trends:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  if (loading) {
-    return <LoadingChart />;
-  }
-
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
-
+export default function TrendingTopics({ data }: TrendingTopicsProps) {
   return (
     <div className="space-y-6">
-      <TrendChart data={chartData} />
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-foreground">
+          Trending AI Topics
+        </h2>
+        <div className="flex items-center space-x-1 text-sm text-green-500">
+          <TrendingUp className="h-4 w-4" />
+          <span>Updated now</span>
+        </div>
+      </div>
+
       <div className="space-y-4">
-        {trends.map((trend, index) => (
-          <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-[var(--color-surface)] hover:bg-opacity-80 transition-colors">
-            <span className="font-medium">{trend.title}</span>
-            <span className="text-green-400">
-              {trend.impact_score > 0 ? '+' : ''}{trend.impact_score}%
-            </span>
-          </div>
+        {data.trends.map((trend, index) => (
+          <motion.div
+            key={trend.title}
+            variants={trendVariants}
+            initial="hidden"
+            animate="visible"
+            custom={index}
+            className="group flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-muted/5 transition-all"
+          >
+            <div className="space-y-1">
+              <h3 className="font-medium text-foreground">{trend.title}</h3>
+              <p className="text-sm text-muted-foreground line-clamp-2">
+                {trend.description}
+              </p>
+              <div className="flex items-center space-x-2 text-sm">
+                <span className="px-2 py-1 rounded-full bg-muted text-foreground/80">
+                  {trend.category}
+                </span>
+                <span className="text-muted-foreground">
+                  First seen: {new Date(trend.first_seen).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-2xl font-bold text-foreground">
+                  {trend.impact_score.toFixed(1)}
+                </p>
+                <span className="text-sm text-muted-foreground">Impact Score</span>
+              </div>
+              <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+          </motion.div>
         ))}
       </div>
     </div>

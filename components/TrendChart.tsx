@@ -1,6 +1,7 @@
 "use client";
 
 import { Line } from "react-chartjs-2";
+import { motion } from "framer-motion";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,7 +10,7 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js';
 
 ChartJS.register(
@@ -22,66 +23,62 @@ ChartJS.register(
   Legend
 );
 
-interface TrendData {
-  date: string;
-  value: number;
-}
+const chartVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.5 } },
+};
 
-interface TrendChartProps {
-  data: TrendData[];
-}
-
-export function TrendChart({ data }: TrendChartProps) {
+export function TrendChart({ data }: { data: any[] }) {
   const chartData = {
     labels: data.map(d => d.date),
     datasets: [
       {
-        label: 'Trend Growth',
+        label: 'Engagement Growth',
         data: data.map(d => d.value),
-        borderColor: 'rgb(37, 99, 235)',
-        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.05)',
         tension: 0.4,
-      }
-    ]
+        pointRadius: 0,
+        borderWidth: 2,
+        fill: true,
+      },
+    ],
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false
-      },
+      legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: 'rgb(255, 255, 255)',
-        bodyColor: 'rgb(255, 255, 255)',
-      }
+        backgroundColor: '#020617',
+        titleColor: '#e2e8f0',
+        bodyColor: '#94a3b8',
+        padding: 12,
+        intersect: false,
+        mode: 'index' as const,
+      },
     },
     scales: {
       y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        ticks: {
-          color: 'rgba(255, 255, 255, 0.7)'
-        }
+        display: false,
+        grid: { display: false },
       },
       x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          color: 'rgba(255, 255, 255, 0.7)'
-        }
-      }
-    }
+        grid: { display: false },
+        ticks: { color: '#64748b' },
+      },
+    },
   };
 
   return (
-    <div className="h-64">
+    <motion.div
+      variants={chartVariants}
+      initial="hidden"
+      animate="visible"
+      className="h-64 bg-gradient-to-br from-card to-muted/5 rounded-xl p-4 border border-border/50"
+    >
       <Line data={chartData} options={options} />
-    </div>
+    </motion.div>
   );
 } 
