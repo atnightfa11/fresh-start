@@ -40,7 +40,10 @@ export async function fetchSonarData(): Promise<MarketIntelligenceData> {
         value: metric.current_value,
         change: metric.change_percentage,
         trend_data: metric.historical_values
-      }))
+      })),
+      insights: [],
+      news: [],
+      opportunities: []
     };
     
   } catch (error) {
