@@ -191,15 +191,15 @@ export default function Home() {
 
           <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
             <Button 
-              size="xl" 
+              size="lg"
               className="gap-3 px-8 py-6 text-lg rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all"
             >
               Get Live Insights
               <ArrowUpRight className="h-5 w-5 mt-0.5" />
             </Button>
             <Button 
-              variant="outline" 
-              size="xl"
+              variant="outline"
+              size="lg"
               className="text-lg rounded-xl px-8 py-6 border-2 hover:bg-foreground/5"
             >
               Watch Product Demo
