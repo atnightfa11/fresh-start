@@ -38,29 +38,27 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
             initial="hidden"
             animate="visible"
             custom={index}
-            className="group flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 bg-gradient-to-br from-card to-muted/5 transition-all"
+            className="group flex items-center justify-between p-6 rounded-xl border border-border/50 bg-gradient-to-br from-card to-muted/5 hover:border-primary/30 transition-all"
           >
-            <div className="space-y-1">
-              <h3 className="font-medium text-foreground">{trend.title}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {trend.description}
-              </p>
-              <div className="flex items-center space-x-2 text-sm">
-                <span className="px-2 py-1 rounded-full bg-muted text-foreground/80">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-semibold text-foreground">{trend.title}</h3>
+                <span className="px-2 py-1 text-xs rounded-full bg-green-900/20 text-green-400">
                   {trend.category}
                 </span>
-                <span className="text-muted-foreground">
-                  First seen: {new Date(trend.first_seen).toLocaleDateString()}
-                </span>
               </div>
+              <p className="text-muted-foreground text-sm line-clamp-2">
+                {trend.description}
+              </p>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-2xl font-bold text-foreground">
+                <p className={`text-2xl font-bold ${trend.impact_score >= 4 ? 'text-green-500' : 'text-red-500'}`}>
                   {trend.impact_score.toFixed(1)}
+                  <span className="text-sm ml-1">/5.0</span>
                 </p>
-                <span className="text-sm text-muted-foreground">Impact Score</span>
+                <span className="text-xs text-muted-foreground">Impact Score</span>
               </div>
               <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>

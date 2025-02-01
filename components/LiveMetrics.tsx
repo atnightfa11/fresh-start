@@ -29,13 +29,11 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
             initial="hidden"
             animate="visible"
             transition={{ delay: index * 0.1 }}
-            className="bg-gradient-to-br from-card to-muted/20 p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all"
+            className="bg-gradient-to-br from-card to-muted/5 p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-foreground/80">{metric.name}</h3>
-              <span className={`text-sm ${
-                metric.change >= 0 ? 'text-green-500' : 'text-red-500'
-              }`}>
+              <h3 className="font-medium text-foreground/90">{metric.name}</h3>
+              <span className={`text-sm ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                 {metric.change >= 0 ? '+' : ''}{metric.change.toFixed(1)}%
               </span>
             </div>
@@ -44,16 +42,9 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
               <p className="text-3xl font-bold text-foreground">
                 {metric.value.toFixed(1)}%
               </p>
-              <div className="w-24 h-12">
-                <Sparklines 
-                  data={metric.trend_data} 
-                  width={96} 
-                  height={48}
-                >
-                  <SparklinesLine 
-                    color={metric.change >= 0 ? "#10b981" : "#ef4444"} 
-                    style={{ strokeWidth: 2, fillOpacity: 0.1 }}
-                  />
+              <div className="w-32 h-16">
+                <Sparklines data={metric.trend_data}>
+                  <SparklinesLine color={metric.change >= 0 ? "#10b981" : "#ef4444"} />
                 </Sparklines>
               </div>
             </div>

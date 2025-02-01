@@ -11,6 +11,9 @@ import TrendingTopics from '@/components/TrendingTopics';
 import LiveMetrics from '@/components/LiveMetrics';
 import { fetchSonarData } from "@/lib/sonar";
 import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight } from 'lucide-react';
+import { Section } from '@/components/ui/section';
+import { DataCard } from '@/components/ui/data-card';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -170,6 +173,31 @@ export default function Home() {
   return (
     <div className="min-h-screen pt-24 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* New Hero Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16 space-y-6"
+        >
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
+            AI marketing moves fast.
+            <br />
+            We track it in real-time.
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Stay ahead of AI trends with live insights, performance metrics, and strategic intelligence.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button size="lg" className="gap-2">
+              Get Real-Time Insights
+              <ArrowUpRight className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="lg">
+              View Live Demo
+            </Button>
+          </div>
+        </motion.div>
+
         <AnimatePresence mode="wait">
           {loading ? (
             <LoadingSkeleton />
@@ -182,6 +210,21 @@ export default function Home() {
             >
               <TrendingTopics data={data} />
               <LiveMetrics data={data} />
+              <Section size="lg">
+                <DataCard className="text-center p-12">
+                  <div className="space-y-4">
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
+                      Deep Strategic Insights
+                    </h2>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                      Coming soon: AI-powered strategic recommendations and market opportunity analysis.
+                    </p>
+                    <Button variant="outline" className="mt-4">
+                      Notify Me When Launched
+                    </Button>
+                  </div>
+                </DataCard>
+              </Section>
             </motion.div>
           ) : null}
         </AnimatePresence>

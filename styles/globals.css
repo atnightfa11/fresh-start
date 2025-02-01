@@ -142,4 +142,32 @@ h2 {
   h2 {
     @apply text-2xl md:text-4xl font-semibold;
   }
+}
+
+/* Add gradient animation */
+@keyframes gradient-pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+.bg-gradient-pulse {
+  animation: gradient-pulse 3s ease-in-out infinite;
+  background: linear-gradient(
+    45deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(124, 58, 237, 0.1),
+    rgba(59, 130, 246, 0.1)
+  );
+}
+
+/* Sparkline chart improvements */
+.react-sparklines {
+  margin: -10px -20px;
+  padding: 10px 20px;
+}
+
+.react-sparklines-path {
+  stroke-width: 2;
+  stroke-linecap: round;
 } 

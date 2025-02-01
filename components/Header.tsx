@@ -17,14 +17,10 @@ export default function Header() {
   return (
     <header className="fixed w-full top-0 z-50 bg-background/80 backdrop-blur-md border-b border-gray-800">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
-                Neural Signal
-              </span>
-            </Link>
-          </div>
+        <div className="flex justify-between h-16 items-center">
+          <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
+            Neural Signal
+          </Link>
           
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
@@ -37,18 +33,18 @@ export default function Header() {
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/trends" className="text-gray-300 hover:text-white transition-colors">
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="/trends" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Trends
             </Link>
-            <Link href="/insights" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/insights" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Insights
             </Link>
-            <Link href="/tools" className="text-gray-300 hover:text-white transition-colors">
+            <Link href="/tools" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Tools
             </Link>
-            <Button variant="default" onClick={handleGetStarted}>
-              Get Started
+            <Button variant="default" asChild>
+              <Link href="/get-started">Get Started</Link>
             </Button>
           </div>
         </div>
