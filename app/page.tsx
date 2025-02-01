@@ -177,23 +177,32 @@ export default function Home() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16 space-y-6"
+          className="text-center mb-16 space-y-8 relative overflow-hidden"
         >
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
-            AI marketing moves fast.
+          <div className="absolute inset-0 bg-gradient-pulse opacity-20 -z-10" />
+          
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent leading-tight">
+            AI Marketing Intelligence
             <br />
-            We track it in real-time.
+            <span className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              Real-Time Market Tracking
+            </span>
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Stay ahead of AI trends with live insights, performance metrics, and strategic intelligence.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button size="lg" className="gap-2">
-              Get Real-Time Insights
-              <ArrowUpRight className="h-4 w-4" />
+
+          <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+            <Button 
+              size="xl" 
+              className="gap-3 px-8 py-6 text-lg rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all"
+            >
+              Get Live Insights
+              <ArrowUpRight className="h-5 w-5 mt-0.5" />
             </Button>
-            <Button variant="outline" size="lg">
-              View Live Demo
+            <Button 
+              variant="outline" 
+              size="xl"
+              className="text-lg rounded-xl px-8 py-6 border-2 hover:bg-foreground/5"
+            >
+              Watch Product Demo
             </Button>
           </div>
         </motion.div>

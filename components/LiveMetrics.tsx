@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Sparklines, SparklinesLine } from "react-sparklines";
 import { MarketIntelligenceData } from "@/types/api";
 import { formatPercentage } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -29,22 +31,40 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
             initial="hidden"
             animate="visible"
             transition={{ delay: index * 0.1 }}
-            className="bg-gradient-to-br from-card to-muted/5 p-6 rounded-xl border border-border/50 hover:border-primary/30 transition-all"
+            className="bg-background p-6 rounded-2xl border-2 border-border/30 hover:border-primary/20 transition-all"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-foreground/90">{metric.name}</h3>
-              <span className={`text-sm ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {metric.change >= 0 ? '+' : ''}{metric.change.toFixed(1)}%
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-foreground/90">{metric.name}</h3>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {metricDescriptions[metric.name]}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <span className={`text-sm font-medium ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {metric.change >= 0 ? '↑' : '↓'} {Math.abs(metric.change).toFixed(1)}%
               </span>
             </div>
             
             <div className="flex items-end justify-between">
-              <p className="text-3xl font-bold text-foreground">
-                {metric.value.toFixed(1)}%
-              </p>
-              <div className="w-32 h-16">
+              <div className="space-y-1">
+                <p className="text-4xl font-bold text-foreground">
+                  {metric.value.toFixed(1)}%
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {metric.change >= 0 ? 'Increase' : 'Decrease'} from last month
+                </p>
+              </div>
+              <div className="w-40 h-16 relative">
                 <Sparklines data={metric.trend_data}>
-                  <SparklinesLine color={metric.change >= 0 ? "#10b981" : "#ef4444"} />
+                  <SparklinesLine 
+                    color={metric.change >= 0 ? "#10b981" : "#ef4444"} 
+                    style={{ strokeWidth: 2 }}
+                  />
                 </Sparklines>
               </div>
             </div>
