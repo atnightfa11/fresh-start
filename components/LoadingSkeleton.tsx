@@ -44,6 +44,27 @@ export function LoadingSkeleton() {
             />
           ))}
         </div>
+
+        {/* Insights Skeleton */}
+        <div className="space-y-8">
+          {/* Insights Skeleton */}
+          <div className="space-y-4">
+            <div className="h-8 w-1/4 bg-muted rounded-lg animate-pulse" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-48 bg-muted/20 rounded-xl border border-border/50 animate-pulse" />
+              ))}
+            </div>
+          </div>
+
+          {/* Opportunities Skeleton */}
+          <div className="space-y-4">
+            <div className="h-8 w-1/4 bg-muted rounded-lg animate-pulse" />
+            {[1, 2].map((i) => (
+              <div key={i} className="h-32 bg-muted/20 rounded-xl border border-border/50 animate-pulse" />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

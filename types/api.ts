@@ -49,12 +49,16 @@ export interface MarketIntelligenceData {
     date: string;
     industry: string;
     region: string[];
+    sources: string[];
+    sentiment: 'positive' | 'neutral' | 'negative';
   }>;
   insights: Array<{
     title: string;
     content: string;
     confidence: number;
     source?: string;
+    impact_areas: string[];
+    timeframe: 'short' | 'medium' | 'long';
   }>;
   metrics: Array<{
     name: string;
@@ -68,11 +72,22 @@ export interface MarketIntelligenceData {
     source: string;
     published_date: string;
     summary: string;
+    relevance_score: number;
+    key_entities: string[];
   }>;
   opportunities: Array<{
     title: string;
     description: string;
     potential_impact: number;
     difficulty: 'low' | 'medium' | 'high';
+    timeframe: string;
+    required_resources: string[];
   }>;
+}
+
+interface SonarMetricResponse {
+  metric_name: string;
+  current_value: string;
+  change_percentage: string;
+  historical_values: number[];
 }

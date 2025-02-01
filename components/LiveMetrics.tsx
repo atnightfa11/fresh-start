@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Sparklines, SparklinesLine } from "react-sparklines";
 import { MarketIntelligenceData } from "@/types/api";
+import { formatPercentage } from '@/lib/utils';
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },

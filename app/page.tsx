@@ -142,8 +142,27 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
-        {error}
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center space-y-4 max-w-2xl">
+          <h1 className="text-2xl font-semibold text-red-500">
+            Connection Issue
+          </h1>
+          <p className="text-muted-foreground">
+            Unable to connect to intelligence service. Please check:
+          </p>
+          <ul className="list-disc text-left space-y-2 text-sm text-muted-foreground mx-auto w-fit">
+            <li>Internet connection</li>
+            <li>Service status</li>
+            <li>Browser permissions</li>
+          </ul>
+          <Button 
+            variant="default" 
+            onClick={() => window.location.reload()}
+            className="mt-4"
+          >
+            Retry Connection
+          </Button>
+        </div>
       </div>
     );
   }

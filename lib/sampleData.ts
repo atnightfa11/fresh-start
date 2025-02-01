@@ -14,10 +14,12 @@ export const sampleMarketData: MarketIntelligenceData = {
   search_trends: [
     {
       term: "AI Marketing Automation",
-      growth: 45.2,
+      growth: 240,
       date: "2024-03-01",
       industry: "E-commerce",
-      region: ["Global"]
+      region: ["Global"],
+      sources: ["Google Trends", "Market Research"],
+      sentiment: "positive" as const
     }
   ],
   metrics: [
