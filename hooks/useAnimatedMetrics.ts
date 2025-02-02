@@ -1,22 +1,24 @@
+import { useEffect, useMemo } from "react";
 import { useAnimatedValue } from "./useAnimatedValue";
-import { useEffect, useRef } from "react";
 
 export function useAnimatedMetrics(metrics?: Array<{ value: number }>) {
-  // 1. Initialize hooks at top level
-  const animatedValues = metrics?.map(m => useAnimatedValue(m.value, 1)) || [];
+  // Initialize with empty array if no metrics
+  const initialMetrics = metrics || [];
   
-  // 2. Store in ref for persistence
-  const animatedValuesRef = useRef(animatedValues);
+  // Create stable array of animated values
+  const animatedValues = useMemo(
+    () => initialMetrics.map(() => useAnimatedValue(0, 1)),
+    [initialMetrics.length] // Only recreate when length changes
+  );
 
-  // 3. Update ref when metrics change
+  // Update values when metrics change
   useEffect(() => {
-    animatedValuesRef.current = metrics?.map((m, i) => {
-      const existing = animatedValuesRef.current[i];
-      if (existing) existing.setValue(m.value);
-      return existing || useAnimatedValue(m.value, 1);
-    }) || [];
-  }, [metrics]);
+    initialMetrics.forEach((metric, i) => {
+      const [, setValue] = animatedValues[i];
+      setValue(metric.value);
+    });
+  }, [initialMetrics, animatedValues]);
 
-  // 4. Return current values
-  return animatedValuesRef.current.map(av => av.value);
-} 
+  // Return only current values
+  return animatedValues.map(([value]) => value);
+}

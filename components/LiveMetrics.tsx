@@ -33,8 +33,7 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
   const animatedValues = useAnimatedMetrics(data?.metrics);
   const lastUpdated = useTimeAgo(data?.lastUpdated || new Date());
 
-  // Move conditional return AFTER hooks
-  if (!data?.metrics || !data.lastUpdated) {
+  if (!data?.metrics?.length) {
     return (
       <div className="text-center p-8 text-muted-foreground">
         <p>No performance data available</p>
@@ -71,15 +70,13 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
             <div className="flex items-end justify-between">
               <div className="space-y-1">
                 <p className="text-4xl font-bold text-foreground">
-                  {animatedValues[index].toFixed(1)}%
+                  {animatedValues[index]?.toFixed(1)}%
                 </p>
                 <div className="flex items-center gap-2 text-sm">
                   <span className={`font-medium ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                     {metric.change >= 0 ? '▲' : '▼'} {Math.abs(metric.change).toFixed(1)}%
                   </span>
-                  <span className="text-muted-foreground">
-                    vs. last month
-                  </span>
+                  <span className="text-muted-foreground">vs. last month</span>
                 </div>
               </div>
               <div className="w-40 h-16 relative">

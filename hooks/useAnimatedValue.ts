@@ -1,29 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
 import { animate } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
 
-interface AnimatedValue {
-  value: number;
-  setValue: (newValue: number) => void;
-}
+export function useAnimatedValue(initial: number, duration = 0.5) {
+  const [value, setValue] = useState(initial);
+  const animationRef = useRef<ReturnType<typeof animate> | null>(null);
 
-export function useAnimatedValue(initial: number, duration = 0.5): AnimatedValue {
-  const animatedValue = useRef(initial);
-  
-  const setValue = (newValue: number) => {
-    animatedValue.current = newValue;
+  const setAnimatedValue = (newValue: number) => {
+    animationRef.current?.stop();
+    animationRef.current = animate(value, newValue, {
+      duration,
+      onUpdate: (latest) => setValue(latest)
+    });
   };
 
   useEffect(() => {
-    const controls = animate(animatedValue.current, initial, {
-      duration,
-      onUpdate: (latest) => animatedValue.current = latest,
-    });
+    return () => animationRef.current?.stop();
+  }, []);
 
-    return () => controls.stop();
-  }, [initial, duration]);
-
-  return {
-    value: animatedValue.current,
-    setValue
-  };
+  return [value, setAnimatedValue] as const;
 } 

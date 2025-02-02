@@ -67,6 +67,7 @@ export interface MarketIntelligenceData {
     value: number;
     change: number;
     trend_data: number[];
+    forecast?: number[];
   }>;
   news: Array<{
     title: string;
