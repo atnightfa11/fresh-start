@@ -7,9 +7,8 @@ import { formatPercentage } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { MetricTooltip } from "@/components/MetricContext";
-import { useAnimatedValue } from "@/hooks/useAnimatedValue";
+import { useAnimatedMetrics } from "@/hooks/useAnimatedMetrics";
 import { useTimeAgo } from "@/hooks/useTimeAgo";
-import { useMemo } from "react";
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -31,6 +30,10 @@ const metricRecommendations = {
 };
 
 export default function LiveMetrics({ data }: LiveMetricsProps) {
+  const animatedValues = useAnimatedMetrics(data?.metrics);
+  const lastUpdated = useTimeAgo(data?.lastUpdated || new Date());
+
+  // Move conditional return AFTER hooks
   if (!data?.metrics || !data.lastUpdated) {
     return (
       <div className="text-center p-8 text-muted-foreground">
@@ -38,11 +41,6 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
       </div>
     );
   }
-
-  const lastUpdated = useTimeAgo(data?.lastUpdated || new Date());
-  const animatedValues = useMemo(() => 
-    data.metrics.map(m => useAnimatedValue(m.value, 1))
-  , [data]);
 
   return (
     <div className="space-y-6">

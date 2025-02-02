@@ -8,6 +8,7 @@
     }
   },
   "rules": {
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/exhaustive-deps": "off",
+    "react/style-prop-object": "off"
   }
 }

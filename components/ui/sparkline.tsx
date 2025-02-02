@@ -57,7 +57,7 @@ export function Sparkline({ data }: SparklineProps) {
       </svg>
       
       {hoverIndex !== null && (
-        <div 
+        <div
           className="absolute bg-background border border-border px-3 py-2 rounded-lg shadow-lg text-sm left-[var(--sparkline-left)] -translate-x-1/2"
           // eslint-disable-next-line react/style-prop-object
           style={{ 
