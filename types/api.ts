@@ -3,6 +3,7 @@ export interface Trend {
   metrics: string[];
   technical_details: string;
   adoption_rate: number;
+  insight?: string;
 }
 
 export interface Insight {
@@ -42,6 +43,7 @@ export interface MarketIntelligenceData {
     category: string;
     first_seen: Date;
     last_updated: Date;
+    insight?: string;
   }>;
   search_trends: Array<{
     term: string;
@@ -83,6 +85,7 @@ export interface MarketIntelligenceData {
     timeframe: string;
     required_resources: string[];
   }>;
+  lastUpdated: Date;
 }
 
 interface SonarMetricResponse {

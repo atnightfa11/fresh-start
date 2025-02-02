@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, TrendingUp } from "lucide-react";
+import { ArrowUpRight, TrendingUp, Lightbulb } from "lucide-react";
 import { MarketIntelligenceData } from "@/types/api";
 
 const trendVariants = {
@@ -50,6 +50,15 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
               <p className="text-muted-foreground text-base line-clamp-2">
                 {trend.description}
               </p>
+              <div className="p-4 rounded-lg bg-muted/10 border border-muted/20">
+                <p className="text-sm font-medium text-foreground/90 flex items-center gap-2">
+                  <Lightbulb className="h-4 w-4 text-yellow-500" />
+                  Why This Matters:
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {trend.insight || "Significant impact detected in this sector—recommend reviewing campaign allocations."}
+                </p>
+              </div>
             </div>
             
             <div className="flex items-center gap-4 mt-4 md:mt-0">

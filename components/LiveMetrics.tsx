@@ -7,6 +7,9 @@ import { formatPercentage } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
 import { MetricTooltip } from "@/components/MetricContext";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
+import { useTimeAgo } from "@/hooks/useTimeAgo";
+import { useMemo } from "react";
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -17,7 +20,30 @@ interface LiveMetricsProps {
   data: MarketIntelligenceData;
 }
 
+const metricRecommendations = {
+  "Engagement Rate": (change: number) => 
+    change >= 0 ? "Continue current optimization strategies" 
+    : "Review content quality and targeting parameters",
+  "Conversion Rate": (change: number) =>
+    change >= 0 ? "Consider increasing budget for high-performing campaigns"
+    : "A/B test landing pages and CTAs",
+  // Add more metric-specific recommendations
+};
+
 export default function LiveMetrics({ data }: LiveMetricsProps) {
+  if (!data?.metrics || !data.lastUpdated) {
+    return (
+      <div className="text-center p-8 text-muted-foreground">
+        <p>No performance data available</p>
+      </div>
+    );
+  }
+
+  const lastUpdated = useTimeAgo(data?.lastUpdated || new Date());
+  const animatedValues = useMemo(() => 
+    data.metrics.map(m => useAnimatedValue(m.value, 1))
+  , [data]);
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold text-foreground">
@@ -47,11 +73,16 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
             <div className="flex items-end justify-between">
               <div className="space-y-1">
                 <p className="text-4xl font-bold text-foreground">
-                  {metric.value.toFixed(1)}%
+                  {animatedValues[index].toFixed(1)}%
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {metric.change >= 0 ? 'Increase' : 'Decrease'} from last month
-                </p>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className={`font-medium ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {metric.change >= 0 ? '▲' : '▼'} {Math.abs(metric.change).toFixed(1)}%
+                  </span>
+                  <span className="text-muted-foreground">
+                    vs. last month
+                  </span>
+                </div>
               </div>
               <div className="w-40 h-16 relative">
                 <Sparklines data={metric.trend_data}>
@@ -62,13 +93,19 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
                 </Sparklines>
               </div>
             </div>
+
+            <div className="mt-4 pt-4 border-t border-muted/20">
+              <p className="text-sm text-muted-foreground">
+                {metricRecommendations[metric.name as keyof typeof metricRecommendations]?.(metric.change)}
+              </p>
+            </div>
           </motion.div>
         ))}
       </div>
 
       <div className="pt-6 border-t border-border/50">
         <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+          <span>Updated {lastUpdated}</span>
           <div className="flex items-center space-x-1.5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>

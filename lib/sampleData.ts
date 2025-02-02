@@ -8,7 +8,8 @@ export const sampleMarketData: MarketIntelligenceData = {
       impact_score: 4.5,
       category: "Retail",
       first_seen: new Date("2024-01-15"),
-      last_updated: new Date()
+      last_updated: new Date(),
+      insight: "Retailers using AI personalization see 35% higher conversion rates"
     }
   ],
   search_trends: [
@@ -32,5 +33,6 @@ export const sampleMarketData: MarketIntelligenceData = {
   ],
   news: [],
   opportunities: [],
-  insights: []
+  insights: [],
+  lastUpdated: new Date()
 }; 

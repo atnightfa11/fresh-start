@@ -58,49 +58,23 @@ export async function fetchSonarData(): Promise<MarketIntelligenceData> {
       throw new Error(`Sonar API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data: MarketIntelligenceData = await response.json();
     
     // Transform Sonar API response to match our schema
     return {
-      trends: data.emerging_trends.map((trend: any) => ({
-        title: trend.name,
-        description: trend.description,
-        impact_score: trend.impact_score,
-        category: trend.category,
-        first_seen: new Date(trend.first_detected),
-        last_updated: new Date(trend.last_updated)
-      })),
-      search_trends: data.search_metrics.map((metric: any) => ({
-        term: metric.keyword,
-        growth: metric.growth_rate,
-        date: metric.date,
-        industry: metric.industry,
-        region: Array.isArray(metric.regions) ? metric.regions : [metric.regions],
-        sources: metric.sources || ["Unknown"],
-        sentiment: metric.sentiment || "neutral"
-      })),
-      metrics: data.performance_metrics.map((metric: any) => {
-        const rawValue = parseFloat(
-          String(metric.current_value).replace(/[^0-9.-]/g, '')
-        );
-        const rawChange = parseFloat(
-          String(metric.change_percentage).replace(/[^0-9.-]/g, '')
-        );
-        
-        return {
-          name: metric.metric_name,
-          value: isNaN(rawValue) ? 0 : rawValue,
-          change: isNaN(rawChange) ? 0 : rawChange,
-          trend_data: metric.historical_values
-        };
-      }),
-      insights: [],
-      news: [],
-      opportunities: []
+      ...data,
+      lastUpdated: new Date(data.lastUpdated || Date.now()),
+      trends: data.trends.map(t => ({
+        ...t,
+        insight: t.insight || "Significant impact detected in this sector"
+      }))
     };
     
   } catch (error) {
     console.error("Sonar API integration failed:", error);
-    return sampleMarketData; // Fallback to sample data
+    return {
+      ...sampleMarketData,
+      lastUpdated: new Date()
+    };
   }
 } 

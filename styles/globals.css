@@ -214,4 +214,10 @@ h2 {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+@layer utilities {
+  .sparkline-tooltip {
+    left: var(--sparkline-left);
+  }
 } 
