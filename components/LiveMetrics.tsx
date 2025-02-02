@@ -6,6 +6,7 @@ import { MarketIntelligenceData } from "@/types/api";
 import { formatPercentage } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info } from "lucide-react";
+import { MetricTooltip } from "@/components/MetricContext";
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -36,14 +37,7 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold text-foreground/90">{metric.name}</h3>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="h-4 w-4 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {metricDescriptions[metric.name]}
-                  </TooltipContent>
-                </Tooltip>
+                <MetricTooltip metric={metric.name} />
               </div>
               <span className={`text-sm font-medium ${metric.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                 {metric.change >= 0 ? '↑' : '↓'} {Math.abs(metric.change).toFixed(1)}%
