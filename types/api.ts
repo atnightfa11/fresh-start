@@ -1,5 +1,14 @@
+export interface Metric {
+  name: string;
+  value: number;
+  change: number;
+  category: string;
+  trend_data: number[];
+  forecast?: number[];
+}
+
 export interface Trend {
-  topic: string;
+  title: string;
   metrics: string[];
   technical_details: string;
   adoption_rate: number;
@@ -62,13 +71,7 @@ export interface MarketIntelligenceData {
     impact_areas: string[];
     timeframe: 'short' | 'medium' | 'long';
   }>;
-  metrics: Array<{
-    name: string;
-    value: number;
-    change: number;
-    trend_data: number[];
-    forecast?: number[];
-  }>;
+  metrics: Metric[];
   news: Array<{
     title: string;
     url: string;
@@ -87,11 +90,4 @@ export interface MarketIntelligenceData {
     required_resources: string[];
   }>;
   lastUpdated: Date;
-}
-
-interface SonarMetricResponse {
-  metric_name: string;
-  current_value: string;
-  change_percentage: string;
-  historical_values: number[];
 }

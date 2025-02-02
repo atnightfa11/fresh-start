@@ -32,10 +32,17 @@ const sampleMarketData: MarketIntelligenceData = {
       name: "ROI Improvement",
       value: 35,
       change: 12,
+      category: "Marketing",
       trend_data: [25, 28, 32, 35]
     }
   ],
-  insights: ["Sample insight about market trends"],
+  insights: [{
+    title: "AI Content Optimization",
+    content: "Implement generative AI for dynamic content personalization",
+    confidence: 0.92,
+    impact_areas: ["Conversion Rates", "Engagement"],
+    timeframe: "short"
+  }],
   news: [],
   opportunities: [],
   lastUpdated: new Date()
