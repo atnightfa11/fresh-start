@@ -28,6 +28,7 @@ export const sampleMarketData: MarketIntelligenceData = {
       name: "Engagement Rate",
       value: 68.3,
       change: 12.4,
+      category: "Marketing",
       trend_data: [60, 65, 68, 70, 72, 68, 67],
       forecast: [68, 69, 71]
     }
