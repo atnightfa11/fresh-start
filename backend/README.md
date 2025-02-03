@@ -34,4 +34,14 @@ These are set in Render's dashboard Environment Settings:
 - `REDIS_PASSWORD`: Automatically provided by Render
 - `REDIS_SSL`: Set to 'true' for SSL connection
 
+For Sonar API:
+- `SONAR_API_KEY`: Your SonarQube API token
+- `SONAR_HOST`: sonar.yourdomain.com
+- `SONAR_PORT`: 9000
+
+For Perplexity AI:
+- `PERPLEXITY_API_KEY`: Your Perplexity.ai API key
+
+Never commit these to version control!
+
 Note: Do not add these to .env files - they are managed through Render's dashboard. 

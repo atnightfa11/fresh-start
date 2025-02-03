@@ -3,13 +3,13 @@ import { MarketIntelligenceData } from "@/types/api";
 export const sampleMarketData: MarketIntelligenceData = {
   trends: [
     {
-      title: "AI in Retail",
-      description: "AI transforming customer experiences",
-      impact_score: 4.5,
-      category: "Retail",
-      first_seen: new Date("2024-01-15"),
+      title: "AI-Powered Campaign Optimization",
+      description: "AI-driven marketing automation trends",
+      impact_score: 9.2,
+      category: "Marketing Tech",
+      first_seen: new Date("2024-03-01"),
       last_updated: new Date(),
-      insight: "Retailers using AI personalization see 35% higher conversion rates"
+      insight: "Marketers using AI automation see 40% higher ROI"
     }
   ],
   search_trends: [
@@ -25,12 +25,11 @@ export const sampleMarketData: MarketIntelligenceData = {
   ],
   metrics: [
     {
-      name: "Engagement Rate",
-      value: 68.3,
-      change: 12.4,
-      category: "Marketing",
-      trend_data: [60, 65, 68, 70, 72, 68, 67],
-      forecast: [68, 69, 71]
+      name: "ROI",
+      value: 4.5,
+      change: 1.3,
+      category: "Performance",
+      trend_data: [3.8, 4.1, 4.3, 4.5]
     }
   ],
   news: [],

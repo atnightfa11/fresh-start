@@ -3,9 +3,11 @@ import { useState } from 'react';
 
 interface SparklineProps {
   data: number[];
+  current: number;
+  benchmark?: number;
 }
 
-export function Sparkline({ data }: SparklineProps) {
+export function Sparkline({ data, current, benchmark }: SparklineProps) {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
   const max = Math.max(...data);
   const min = Math.min(...data);

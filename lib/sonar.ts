@@ -1,8 +1,7 @@
 import { MarketIntelligenceData } from "@/types/api";
 import { useState, useEffect } from "react";
 
-const SONAR_API_KEY = process.env.NEXT_PUBLIC_SONAR_API_KEY;
-const SONAR_ENDPOINT = "https://api.sonar.pro/v1/insights";
+const MARKET_INTEL_ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}/api/market-intelligence`;
 
 const sampleMarketData: MarketIntelligenceData = {
   trends: [
@@ -49,44 +48,13 @@ const sampleMarketData: MarketIntelligenceData = {
   lastUpdated: new Date()
 };
 
-export async function fetchSonarData(): Promise<MarketIntelligenceData> {
+export async function fetchMarketInsights() {
   try {
-    console.log("Sonar API Request:", {
-      endpoint: SONAR_ENDPOINT,
-      headers: {
-        Authorization: `Bearer ${SONAR_API_KEY?.slice(0, 5)}...` // Partial key for security
-      }
-    });
-
-    const response = await fetch(SONAR_ENDPOINT, {
-      headers: {
-        "Authorization": `Bearer ${SONAR_API_KEY}`,
-        "Content-Type": "application/json"
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Sonar API error: ${response.statusText}`);
-    }
-
-    const data: MarketIntelligenceData = await response.json();
-    
-    // Transform Sonar API response to match our schema
-    return {
-      ...data,
-      lastUpdated: new Date(data.lastUpdated || Date.now()),
-      trends: data.trends.map(t => ({
-        ...t,
-        insight: t.insight || "Significant impact detected in this sector"
-      }))
-    };
-    
+    const response = await fetch(MARKET_INTEL_ENDPOINT);
+    return await response.json() as MarketIntelligenceData;
   } catch (error) {
-    console.error("Sonar API integration failed:", error);
-    return {
-      ...sampleMarketData,
-      lastUpdated: new Date()
-    };
+    console.error('Failed to fetch insights:', error);
+    return sampleMarketData;
   }
 }
 
@@ -95,7 +63,7 @@ export function useLiveMarketData() {
   
   useEffect(() => {
     const interval = setInterval(async () => {
-      const newData = await fetchSonarData();
+      const newData = await fetchMarketInsights();
       setData(newData);
     }, 30000); // Refresh every 30 seconds
     

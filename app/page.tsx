@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense, ErrorBoundary } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -116,6 +116,16 @@ const TRUSTED_SOURCES = [
   'McKinsey'
 ];
 
+function DataSection({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary fallback={<DataError />}>
+      <Suspense fallback={<LoadingSkeleton />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
 export default function Home() {
   const [data, setData] = useState<MarketIntelligenceData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -171,73 +181,20 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen pt-24 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* New Hero Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16 space-y-8 relative overflow-hidden"
-        >
-          <div className="absolute inset-0 bg-gradient-pulse opacity-20 -z-10" />
+    <div className="min-h-screen">
+      <Header />
+      
+      <main className="pt-24 px-4">
+        <div className="max-w-7xl mx-auto">
+          <DataSection>
+            <TrendingTopics data={data} />
+          </DataSection>
           
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent leading-tight">
-            AI Marketing Intelligence
-            <br />
-            <span className="text-4xl md:text-5xl font-semibold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-              Real-Time Market Tracking
-            </span>
-          </h1>
-
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-            <Button 
-              size="lg"
-              className="gap-3 px-8 py-6 text-lg rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all"
-            >
-              Get Live Insights
-              <ArrowUpRight className="h-5 w-5 mt-0.5" />
-            </Button>
-            <Button 
-              variant="outline"
-              size="lg"
-              className="text-lg rounded-xl px-8 py-6 border-2 hover:bg-foreground/5"
-            >
-              Watch Product Demo
-            </Button>
-          </div>
-        </motion.div>
-
-        <AnimatePresence mode="wait">
-          {loading ? (
-            <LoadingSkeleton />
-          ) : data ? (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-12"
-            >
-              <TrendingTopics data={data} />
-              <LiveMetrics data={data} />
-              <Section size="lg">
-                <DataCard className="text-center p-12">
-                  <div className="space-y-4">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-violet-500 bg-clip-text text-transparent">
-                      Deep Strategic Insights
-                    </h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                      Coming soon: AI-powered strategic recommendations and market opportunity analysis.
-                    </p>
-                    <Button variant="outline" className="mt-4">
-                      Notify Me When Launched
-                    </Button>
-                  </div>
-                </DataCard>
-              </Section>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
+          <DataSection>
+            <LiveMetrics data={data} />
+          </DataSection>
+        </div>
+      </main>
     </div>
   );
 }
