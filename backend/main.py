@@ -9,6 +9,7 @@ import os
 from redis import Redis
 from typing import List, Optional
 from fastapi.responses import JSONResponse
+from flask_cors import CORS
 
 # Pydantic Models
 class TrendBase(BaseModel):
@@ -47,13 +48,7 @@ app = FastAPI(title="Neural Signal API",
              description="Real-time AI Marketing Intelligence Engine",
              version="1.0.0")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://ai-marketing.heathergrass.com"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Redis Configuration
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')

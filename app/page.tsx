@@ -9,7 +9,11 @@ import LiveMetrics from '@/components/LiveMetrics';
 import { useLiveMarketData } from '@/lib/sonar';
 
 export default function Page() {
-  const data = useLiveMarketData();
+  const { data, error } = useLiveMarketData();
+
+  if (error) {
+    return <DataError message={error} />;
+  }
 
   return (
     <div className="min-h-screen">

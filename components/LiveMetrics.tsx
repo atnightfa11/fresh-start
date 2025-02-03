@@ -49,10 +49,12 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
         {data.metrics?.map((metric, index) => (
           <div key={index} className="bg-card rounded-lg p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold">{metric.name}</h3>
-              <span className="text-primary">{metric.value}%</span>
+              <h3 className="font-semibold">{metric?.name || 'Unnamed Metric'}</h3>
+              <span className="text-primary">
+                {(metric?.value ?? 0).toFixed(1)}%
+              </span>
             </div>
-            <Sparkline data={metric.trend_data} />
+            <Sparkline data={metric?.trend_data || []} />
           </div>
         ))}
       </div>

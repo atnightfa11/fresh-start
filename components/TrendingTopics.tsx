@@ -33,7 +33,7 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
       <div className="space-y-4">
         {data.trends?.map((trend, index) => (
           <motion.div
-            key={trend.title}
+            key={trend?.title || index}
             variants={trendVariants}
             initial="hidden"
             animate="visible"
@@ -42,13 +42,15 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
           >
             <div className="flex-1 space-y-3">
               <div className="flex items-center gap-3">
-                <h3 className="text-xl font-semibold text-foreground">{trend.title}</h3>
+                <h3 className="text-xl font-semibold text-foreground">
+                  {trend?.title || 'Untitled Trend'}
+                </h3>
                 <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-900/20 text-blue-400">
-                  {trend.category}
+                  {trend?.category || 'Untitled Category'}
                 </span>
               </div>
               <p className="text-muted-foreground text-base line-clamp-2">
-                {trend.description}
+                {trend?.description || 'No description available'}
               </p>
               <div className="p-4 rounded-lg bg-muted/10 border border-muted/20">
                 <p className="text-sm font-medium text-foreground/90 flex items-center gap-2">
@@ -56,15 +58,15 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
                   Why This Matters:
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {trend.insight || "Significant impact detected in this sector—recommend reviewing campaign allocations."}
+                  {trend?.insight || 'No insight provided'}
                 </p>
               </div>
             </div>
             
             <div className="flex items-center gap-4 mt-4 md:mt-0">
               <div className="text-right">
-                <p className={`text-3xl font-bold ${trend.impact_score >= 4 ? 'text-green-500' : 'text-red-500'}`}>
-                  {trend.impact_score >= 0 ? '+' : ''}{trend.impact_score.toFixed(1)}%
+                <p className={`text-3xl font-bold ${trend?.impact_score >= 4 ? 'text-green-500' : 'text-red-500'}`}>
+                  {trend?.impact_score >= 0 ? '+' : ''}{trend?.impact_score?.toFixed(1) || 'N/A'}%
                 </p>
                 <span className="text-sm text-muted-foreground">Impact Score</span>
               </div>

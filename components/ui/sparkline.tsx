@@ -6,10 +6,12 @@ interface SparklineProps {
 }
 
 export function Sparkline({ data }: SparklineProps) {
+  // Ensure data exists and is array
+  const validData = Array.isArray(data) ? data : [];
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min;
+  const max = Math.max(...validData);
+  const min = Math.min(...validData);
+  const range = max - min || 1; // Prevent division by zero
   
   const gradientId = `gradient-${data.join('-')}`;
   const isPositiveTrend = data[0] < data[data.length - 1];

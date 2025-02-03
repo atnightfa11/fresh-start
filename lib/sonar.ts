@@ -48,34 +48,65 @@ const sampleMarketData: MarketIntelligenceData = {
   lastUpdated: new Date()
 };
 
+// Add full response validation
+function validateMarketData(data: any): data is MarketIntelligenceData {
+  return (
+    Array.isArray(data?.trends) &&
+    Array.isArray(data?.metrics) &&
+    Array.isArray(data?.search_trends) &&
+    typeof data?.lastUpdated === 'string'
+  );
+}
+
 export async function fetchMarketInsights() {
   try {
     const response = await fetch(MARKET_INTEL_ENDPOINT);
+    
+    if (!response.ok) {
+      // Handle HTTP errors explicitly
+      const errorText = await response.text();
+      throw new Error(`API Error ${response.status}: ${errorText}`);
+    }
+
     const responseData = await response.json();
     
-    // Validate response structure
-    if (!responseData?.trends || !Array.isArray(responseData.trends)) {
-      throw new Error('Invalid data structure from API');
+    if (!validateMarketData(responseData)) {
+      console.error('Invalid API response structure:', responseData);
+      return sampleMarketData;
     }
     
-    return responseData as MarketIntelligenceData;
+    return {
+      ...responseData,
+      lastUpdated: new Date(responseData.lastUpdated)
+    };
   } catch (error) {
-    console.error('Failed to fetch insights:', error);
-    return sampleMarketData;
+    console.error('Network error:', error);
+    // Return extended sample data for better UI fallback
+    return {
+      ...sampleMarketData,
+      lastUpdated: new Date(),
+      _error: error instanceof Error ? error.message : 'Connection failed'
+    };
   }
 }
 
 export function useLiveMarketData() {
   const [data, setData] = useState<MarketIntelligenceData>(sampleMarketData);
-  
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const interval = setInterval(async () => {
-      const newData = await fetchMarketInsights();
-      setData(newData);
-    }, 30000); // Refresh every 30 seconds
+      try {
+        const newData = await fetchMarketInsights();
+        setData(newData);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to refresh');
+      }
+    }, 30000);
     
     return () => clearInterval(interval);
   }, []);
 
-  return data;
+  return { data, error };
 } 
