@@ -1,6 +1,16 @@
 'use client';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import Header from '@/components/Header';
+import DataError from '@/components/DataError';
+import LoadingSkeleton from '@/components/loading-skeleton';
+import TrendingTopics from '@/components/TrendingTopics';
+import LiveMetrics from '@/components/LiveMetrics';
+import { useLiveMarketData } from '@/lib/sonar';
 
 export default function Page() {
+  const data = useLiveMarketData();
+
   return (
     <div className="min-h-screen">
       <Header />
