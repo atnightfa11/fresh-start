@@ -31,7 +31,7 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
       </div>
 
       <div className="space-y-4">
-        {data.trends.map((trend, index) => (
+        {data.trends?.map((trend, index) => (
           <motion.div
             key={trend.title}
             variants={trendVariants}

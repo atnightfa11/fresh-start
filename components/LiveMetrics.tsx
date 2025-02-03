@@ -36,8 +36,8 @@ export default function LiveMetrics({ data }: LiveMetricsProps) {
 
   if (!data?.metrics?.length) {
     return (
-      <div className="text-center p-8 text-muted-foreground">
-        <p>No performance data available</p>
+      <div className="text-center p-4 text-muted-foreground">
+        No metrics available
       </div>
     );
   }

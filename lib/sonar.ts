@@ -51,7 +51,14 @@ const sampleMarketData: MarketIntelligenceData = {
 export async function fetchMarketInsights() {
   try {
     const response = await fetch(MARKET_INTEL_ENDPOINT);
-    return await response.json() as MarketIntelligenceData;
+    const responseData = await response.json();
+    
+    // Validate response structure
+    if (!responseData?.trends || !Array.isArray(responseData.trends)) {
+      throw new Error('Invalid data structure from API');
+    }
+    
+    return responseData as MarketIntelligenceData;
   } catch (error) {
     console.error('Failed to fetch insights:', error);
     return sampleMarketData;
