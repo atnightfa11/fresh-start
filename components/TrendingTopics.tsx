@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowUpRight, TrendingUp, Lightbulb } from "lucide-react";
-import { MarketIntelligenceData } from "@/types/api";
+import { MarketIntelligenceData } from "../types/api";
 
 const trendVariants = {
   hidden: { opacity: 0, x: -20 },
