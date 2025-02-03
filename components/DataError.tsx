@@ -3,7 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-export function DataError() {
+export default function DataError() {
   return (
     <div className="p-8 text-center">
       <Alert variant="destructive">
