@@ -33,7 +33,8 @@ const sampleMarketData: MarketIntelligenceData = {
       change: 12.4,
       category: "Marketing",
       trend_data: [60, 65, 68, 70, 72, 68, 67],
-      forecast: [68, 69, 71]
+      forecast: [68, 69, 71],
+      last_updated: new Date()
     }
   ],
   insights: [{
@@ -45,7 +46,7 @@ const sampleMarketData: MarketIntelligenceData = {
   }],
   news: [],
   opportunities: [],
-  lastUpdated: new Date()
+  generated_at: new Date()
 };
 
 // Add full response validation
@@ -54,7 +55,7 @@ function validateMarketData(data: any): data is MarketIntelligenceData {
     Array.isArray(data?.trends) &&
     Array.isArray(data?.metrics) &&
     Array.isArray(data?.search_trends) &&
-    typeof data?.lastUpdated === 'string'
+    (typeof data?.generated_at === 'string' || data?.generated_at instanceof Date)
   );
 }
 
@@ -75,16 +76,20 @@ export async function fetchMarketInsights() {
       return sampleMarketData;
     }
     
+    const generatedAt = typeof responseData.generated_at === 'string'
+      ? new Date(responseData.generated_at as string).toISOString()
+      : responseData.generated_at.toISOString();
+
     return {
       ...responseData,
-      lastUpdated: new Date(responseData.lastUpdated)
+      generated_at: generatedAt
     };
   } catch (error) {
     console.error('Network error:', error);
     // Return extended sample data for better UI fallback
     return {
       ...sampleMarketData,
-      lastUpdated: new Date(),
+      generated_at: new Date(),
       _error: error instanceof Error ? error.message : 'Connection failed'
     };
   }
@@ -98,7 +103,7 @@ export function useLiveMarketData() {
     const interval = setInterval(async () => {
       try {
         const newData = await fetchMarketInsights();
-        setData(newData);
+        setData(newData as MarketIntelligenceData);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to refresh');

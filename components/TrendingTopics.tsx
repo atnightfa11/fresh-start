@@ -1,8 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, TrendingUp, Lightbulb } from "lucide-react";
+import { ArrowUpRight, TrendingUp, Lightbulb, Clock, Activity } from "lucide-react";
 import { MarketIntelligenceData } from "../types/api";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { format } from "date-fns";
 
 const trendVariants = {
   hidden: { opacity: 0, x: -20 },
@@ -32,45 +36,54 @@ export default function TrendingTopics({ data }: TrendingTopicsProps) {
 
       <div className="space-y-4">
         {data.trends?.map((trend, index) => (
-          <motion.div
-            key={trend?.title || index}
-            variants={trendVariants}
-            initial="hidden"
-            animate="visible"
-            custom={index}
-            className="group flex flex-col md:flex-row items-start justify-between p-6 rounded-2xl border-2 border-border/30 bg-background hover:border-primary/20 transition-all"
-          >
-            <div className="flex-1 space-y-3">
-              <div className="flex items-center gap-3">
-                <h3 className="text-xl font-semibold text-foreground">
-                  {trend?.title || 'Untitled Trend'}
-                </h3>
-                <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-900/20 text-blue-400">
-                  {trend?.category || 'Untitled Category'}
-                </span>
+          <motion.div key={trend.title} className="group relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <Badge variant="outline" className="text-sm py-1 px-3">
+                  {trend.category}
+                </Badge>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    First detected: {format(new Date(trend.first_seen), 'MMM dd')}
+                  </span>
+                </div>
               </div>
-              <p className="text-muted-foreground text-base line-clamp-2">
-                {trend?.description || 'No description available'}
-              </p>
-              <div className="p-4 rounded-lg bg-muted/10 border border-muted/20">
-                <p className="text-sm font-medium text-foreground/90 flex items-center gap-2">
-                  <Lightbulb className="h-4 w-4 text-yellow-500" />
-                  Why This Matters:
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {trend?.insight || 'No insight provided'}
+              
+              <h3 className="text-xl font-semibold mb-2">{trend.title}</h3>
+              
+              <div className="bg-blue-50/20 p-4 rounded-lg border border-blue-500/20 mb-4">
+                <div className="flex items-center gap-2 text-blue-300 mb-2">
+                  <Lightbulb className="h-5 w-5" />
+                  <span className="font-medium">Strategic Insight</span>
+                </div>
+                <p className="text-muted-foreground">
+                  {trend.insight || "No insight provided"}
                 </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-4 mt-4 md:mt-0">
-              <div className="text-right">
-                <p className={`text-3xl font-bold ${trend?.impact_score >= 4 ? 'text-green-500' : 'text-red-500'}`}>
-                  {trend?.impact_score >= 0 ? '+' : ''}{trend?.impact_score?.toFixed(1) || 'N/A'}%
-                </p>
-                <span className="text-sm text-muted-foreground">Impact Score</span>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className="flex items-center gap-1">
+                        <Activity className="h-5 w-5 text-purple-500" />
+                        <span className="text-2xl font-bold">
+                          {trend.impact_score.toFixed(1)}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Impact Score (1-10 scale)</p>
+                      <p>Combined market and technical impact</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <Button variant="ghost" size="sm" className="text-muted-foreground">
+                  View Strategy <ArrowUpRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
-              <ArrowUpRight className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>
           </motion.div>
         ))}

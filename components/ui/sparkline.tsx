@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 
 interface SparklineProps {
   data: number[];
@@ -58,24 +59,25 @@ export function Sparkline({ data }: SparklineProps) {
             fill="transparent"
             onMouseEnter={() => setHoverIndex(i)}
             onMouseLeave={() => setHoverIndex(null)}
+            data-tooltip-id="sparkline-tooltip"
           />
         ))}
       </svg>
       
-      {hoverIndex !== null && (
-        <div
-          className="absolute bg-background border border-border px-3 py-2 rounded-lg shadow-lg text-sm"
-          style={{
-            left: `${(hoverIndex / (data.length - 1)) * 100}%`,
-            transform: 'translateX(-50%)'
-          }}
-        >
-          <p className="font-medium">{data[hoverIndex].toFixed(1)}%</p>
-          <p className="text-muted-foreground text-xs">
-            Day {hoverIndex + 1}
-          </p>
-        </div>
-      )}
+      <Tooltip
+        id="sparkline-tooltip"
+        className="!bg-background !text-foreground !border !border-border !rounded-lg !shadow-lg !px-3 !py-2"
+        render={({ content }) => (
+          <>
+            <div className="font-medium">
+              {hoverIndex !== null ? validData[hoverIndex].toFixed(1) + '%' : ''}
+            </div>
+            <div className="text-muted-foreground text-xs">
+              {hoverIndex !== null ? `Day ${hoverIndex + 1}` : ''}
+            </div>
+          </>
+        )}
+      />
     </div>
   );
 } 

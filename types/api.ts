@@ -5,89 +5,62 @@ export interface Metric {
   category: string;
   trend_data: number[];
   forecast?: number[];
+  last_updated: Date;
+  confidence_interval?: [number, number];
 }
 
 export interface Trend {
   title: string;
-  metrics: string[];
-  technical_details: string;
-  adoption_rate: number;
-  insight?: string;
+  description: string;
+  impact_score: number;
+  category: string;
+  first_seen: Date;
+  last_updated: Date;
+  insight: string;
+}
+
+export interface SearchTrend {
+  term: string;
+  growth: number;
+  date: string;
+  industry: string;
+  region: string[];
+  sources: string[];
+  sentiment: "positive" | "neutral" | "negative";
 }
 
 export interface Insight {
-  area: string;
-  analysis: string;
-  implications: string[];
-  case_study: string;
-  confidence_score: number;
+  title: string;
+  content: string;
+  confidence: number;
+  impact_areas: string[];
+  timeframe: "short" | "medium" | "long";
 }
 
 export interface NewsItem {
-  headline: string;
+  title: string;
   source: string;
-  source_url?: string;
-  date: string;
+  date: Date;
   summary: string;
-  impact_analysis: string;
-  technical_implications: string;
-  category: string;
-  relevance_score: number;
+  url: string;
 }
 
 export interface Opportunity {
-  domain: string;
-  technical_potential: string;
-  requirements: string[];
-  roi_projection: string;
-  implementation_complexity: 'High' | 'Medium' | 'Low';
-  market_readiness: number;
+  category: string;
+  description: string;
+  potential_impact: number;
+  timeframe: "short" | "medium" | "long";
 }
 
 export interface MarketIntelligenceData {
-  trends: Array<{
-    title: string;
-    description: string;
-    impact_score: number;
-    category: string;
-    first_seen: Date;
-    last_updated: Date;
-    insight?: string;
-  }>;
-  search_trends: Array<{
-    term: string;
-    growth: number;
-    date: string;
-    industry: string;
-    region: string[];
-    sources: string[];
-    sentiment: 'positive' | 'neutral' | 'negative';
-  }>;
-  insights: Array<{
-    title: string;
-    content: string;
-    confidence: number;
-    source?: string;
-    impact_areas: string[];
-    timeframe: 'short' | 'medium' | 'long';
-  }>;
+  trends: Trend[];
+  search_trends: SearchTrend[];
   metrics: Metric[];
-  news: Array<{
-    title: string;
-    url: string;
-    source: string;
-    published_date: string;
-    summary: string;
-    relevance_score: number;
-    key_entities: string[];
-  }>;
-  opportunities: Array<{
-    title: string;
-    description: string;
-    potential_impact: number;
-    difficulty: 'low' | 'medium' | 'high';
-    timeframe: string;
-    required_resources: string[];
-  }>;
-  lastUpdated: Date;
+  insights: Insight[];
+  news: NewsItem[];
+  opportunities: Opportunity[];
+  generated_at: Date;
 }
+
+
+
