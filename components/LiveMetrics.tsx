@@ -5,6 +5,7 @@ import { Sparkline } from "./ui/sparkline";
 import { animated, useSpring } from '@react-spring/web';
 import { ArrowUp, ArrowDown, TrendingUp } from "lucide-react";
 import { MarketIntelligenceData, Metric } from "@/types/api";
+import type { ComponentProps } from 'react';
 
 const metricVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -59,7 +60,7 @@ const MetricCard = ({ metric, index }: MetricCardProps) => {
             metric.change >= 0 ? 'text-purple-400' : 'text-rose-400'
           }`}>
             <animated.span style={{ display: 'inline' }}>
-              {styles.value.to((val: number) => `${val.toFixed(1)}%`)}
+              {styles.value.to(val => `${val.toFixed(1)}%`)}
             </animated.span>
           </span>
           {metric.change >= 0 ? (
