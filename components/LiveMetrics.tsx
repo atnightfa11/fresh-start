@@ -59,8 +59,8 @@ const MetricCard = ({ metric, index }: MetricCardProps) => {
         <span className={`text-xl font-semibold ${
             metric.change >= 0 ? 'text-purple-400' : 'text-rose-400'
           }`}>
-            <animated.span style={{ display: 'inline' }}>
-              {styles.value.to(val => `${val.toFixed(1)}%`) as unknown as React.ReactNode}
+            <animated.span as any style={{ display: 'inline' }}>
+              {styles.value.to(val => `${val.toFixed(1)}%`)}
             </animated.span>
           </span>
           {metric.change >= 0 ? (
