@@ -26,7 +26,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "types": ["@react-spring/web"]
   },
   "include": [
     "next-env.d.ts",
