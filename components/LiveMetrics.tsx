@@ -32,7 +32,7 @@ interface MetricCardProps {
 }
 
 const MetricCard = ({ metric, index }: MetricCardProps) => {
-  const styles = useSpring({
+  const styles = useSpring<{ value: number }>({
     from: { value: 0 },
     to: { value: metric.value },
     config: { tension: 300, friction: 40 }
@@ -60,7 +60,7 @@ const MetricCard = ({ metric, index }: MetricCardProps) => {
             metric.change >= 0 ? 'text-purple-400' : 'text-rose-400'
           }`}>
             <animated.span style={{ display: 'inline' }}>
-              {styles.value.to(val => `${val.toFixed(1)}%`)}
+              {styles.value.to(val => `${val.toFixed(1)}%`) as unknown as React.ReactNode}
             </animated.span>
           </span>
           {metric.change >= 0 ? (
