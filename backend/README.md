@@ -39,9 +39,17 @@ For Sonar API:
 - `SONAR_HOST`: sonar.yourdomain.com
 - `SONAR_PORT`: 9000
 
-For Perplexity AI:
-- `PERPLEXITY_API_KEY`: Your Perplexity.ai API key
+For Perplexity Sonar Pro:
+- `PERPLEXITY_API_KEY`: Your Perplexity API key (get from https://www.perplexity.ai/settings/api)
+- `CACHE_TTL`: Cache duration in seconds (default: 1800 = 30 minutes)
 
 Never commit these to version control!
+
+## Quick Setup for Perplexity Sonar Pro
+
+1. Get your API key from https://www.perplexity.ai/settings/api
+2. Set `PERPLEXITY_API_KEY` in your environment
+3. The backend will automatically use Sonar Pro for real market intelligence
+4. If no API key is provided, it falls back to sample data
 
 Note: Do not add these to .env files - they are managed through Render's dashboard. 

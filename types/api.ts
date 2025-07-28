@@ -7,6 +7,7 @@ export interface Metric {
   forecast?: number[];
   last_updated: Date;
   confidence_interval?: [number, number];
+  sources?: string[];
 }
 
 export interface Trend {
@@ -17,6 +18,7 @@ export interface Trend {
   first_seen: Date;
   last_updated: Date;
   insight: string;
+  sources?: string[];
 }
 
 export interface SearchTrend {
@@ -29,36 +31,48 @@ export interface SearchTrend {
   sentiment: "positive" | "neutral" | "negative";
 }
 
-export interface Insight {
-  title: string;
-  content: string;
-  confidence: number;
-  impact_areas: string[];
-  timeframe: "short" | "medium" | "long";
-}
 
-export interface NewsItem {
-  title: string;
+
+export interface NewsArticle {
+  headline: string;
   source: string;
-  date: Date;
+  url?: string;
   summary: string;
-  url: string;
+  business_impact: string;
+  published_date: Date;
+  category: string;
 }
 
-export interface Opportunity {
-  category: string;
+export interface Tool {
+  name: string;
+  company: string;
   description: string;
-  potential_impact: number;
-  timeframe: "short" | "medium" | "long";
+  category: string;
+  key_features: string[];
+  pricing_info?: string;
+  target_audience: string;
+  launch_date?: Date;
+  website_url?: string;
+}
+
+export interface CaseStudy {
+  title: string;
+  company: string;
+  industry: string;
+  challenge: string;
+  solution: string;
+  results: string;
+  metrics: string[];
+  source: string;
 }
 
 export interface MarketIntelligenceData {
   trends: Trend[];
+  news: NewsArticle[];
+  tools: Tool[];
+  case_studies: CaseStudy[];
   search_trends: SearchTrend[];
   metrics: Metric[];
-  insights: Insight[];
-  news: NewsItem[];
-  opportunities: Opportunity[];
   generated_at: Date;
 }
 

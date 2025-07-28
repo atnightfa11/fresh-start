@@ -1,15 +1,17 @@
 [build]
+  publish = ".next"
   command = "npm run build"
-  publish = "out"
-
-[build.environment]
-  NODE_VERSION = "18.17.0"
-  NEXT_PUBLIC_API_URL = "https://ai-marketing-hub-backend.onrender.com"
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Production environment variables (set these in Netlify UI)
+# NEXT_PUBLIC_BACKEND_URL = "https://your-backend-url.onrender.com"
 
 [[headers]]
   for = "/*"

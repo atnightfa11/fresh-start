@@ -1,10 +1,11 @@
 import { FC, useEffect, useState, PropsWithChildren } from 'react';
 
 interface ClientOnlyProps extends PropsWithChildren {
+  fallback?: React.ReactNode;
   [key: string]: any;
 }
 
-const ClientOnly: FC<ClientOnlyProps> = ({ children, ...delegated }) => {
+const ClientOnly: FC<ClientOnlyProps> = ({ children, fallback = null, ...delegated }) => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -12,7 +13,7 @@ const ClientOnly: FC<ClientOnlyProps> = ({ children, ...delegated }) => {
   }, []);
 
   if (!hasMounted) {
-    return null;
+    return <>{fallback}</>;
   }
 
   return <div {...delegated}>{children}</div>;

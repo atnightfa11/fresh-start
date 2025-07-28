@@ -1,46 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Marketing Hub
 
-## Getting Started
+Real-time AI Marketing Intelligence Dashboard powered by **Perplexity Sonar Pro** for live market insights.
 
-First, run the development server:
+## 🚀 Features
+
+- **Real-time Market Intelligence** via Perplexity Sonar Pro API
+- **Live Trending Topics** with citations and sources
+- **Marketing Metrics** with industry benchmarks
+- **Search Trends Analysis** across marketing technologies
+- **Interactive Dashboard** with modern UI components
+- **Smart Caching** with Redis for performance
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: FastAPI, Python 3.9+
+- **AI Intelligence**: Perplexity Sonar Pro API
+- **Caching**: Redis
+- **Deployment**: Netlify (Frontend), Render (Backend)
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.9+
+- Perplexity API key ([Get one here](https://www.perplexity.ai/settings/api))
+- Redis (optional, for caching)
+
+### Frontend Setup
 
 ```bash
+# Install dependencies
+npm install
+
+# Set environment variables
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Backend Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Troubleshooting API Issues
-
-1. Verify API key permissions
-2. Check network requests in browser DevTools (F12)
-3. Test endpoint directly:
 ```bash
-curl -H "Authorization: Bearer $SONAR_API_KEY" https://api.sonar.pro/v1/insights
+cd backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set environment variables
+export PERPLEXITY_API_KEY=your_api_key_here
+export REDIS_URL=redis://localhost:6379  # optional
+
+# Start backend server
+uvicorn main:app --reload --port 8000
 ```
-4. Ensure CORS is configured on Sonar's side
+
+## 🔑 Environment Variables
+
+### Backend (.env or environment)
+```bash
+PERPLEXITY_API_KEY=your_perplexity_api_key
+REDIS_URL=redis://localhost:6379
+CACHE_TTL=1800
+```
+
+### Frontend (.env.local)
+```bash
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+```
+
+## 📊 API Integration
+
+The app uses **Perplexity Sonar Pro** for real-time market intelligence:
+
+- **Real-time web search** with citations
+- **Marketing trend analysis** across industries  
+- **Search behavior insights** with geographic data
+- **Industry benchmarks** and performance metrics
+
+If no API key is provided, the backend gracefully falls back to sample data.
+
+## 🚀 Deployment
+
+### Frontend (Netlify)
+- Connect your GitHub repo to Netlify
+- Set `NEXT_PUBLIC_BACKEND_URL` to your backend URL
+- Deploy automatically on git push
+
+### Backend (Render)
+- Connect your GitHub repo to Render
+- Set environment variables in Render dashboard
+- Deploys automatically from main branch
+
+## 📁 Project Structure
+
+```
+├── app/                    # Next.js app router pages
+├── components/             # React components
+├── lib/                   # Utilities and API clients
+├── types/                 # TypeScript type definitions
+├── backend/               # FastAPI backend
+│   ├── main.py           # Sonar Pro integration
+│   └── requirements.txt   # Python dependencies
+└── README.md
+```
+
+## 🔄 Data Flow
+
+1. Frontend requests market intelligence
+2. Backend queries Perplexity Sonar Pro API
+3. Real-time market data parsed and structured
+4. Cached results served with Redis
+5. Interactive dashboard updates
+
+## 🛡️ Error Handling
+
+- Graceful fallback to sample data if API unavailable
+- Comprehensive error boundaries in React
+- Retry logic with exponential backoff
+- User-friendly error messages
+
+## 📈 Performance
+
+- Redis caching (30min TTL)
+- Efficient data parsing
+- Lazy loading components
+- Optimized API calls
+
+Built with ❤️ using modern web technologies and AI-powered insights.
