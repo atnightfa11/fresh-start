@@ -45,7 +45,7 @@ export default function ToolsPage() {
     );
   }
 
-  const categories = ['all', ...new Set(data?.tools?.map(tool => tool.category) || [])];
+  const categories = ['all', ...Array.from(new Set(data?.tools?.map(tool => tool.category) || []))];
   const filteredTools = selectedCategory === 'all' 
     ? data?.tools || []
     : data?.tools?.filter(tool => tool.category === selectedCategory) || [];
