@@ -13,7 +13,7 @@ const insightVariants = {
   }),
 };
 
-export function StrategicInsights({ insights }: { insights: MarketIntelligenceData['insights'] }) {
+export function StrategicInsights({ news }: { news: MarketIntelligenceData['news'] }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-3 text-purple-400">
@@ -22,9 +22,9 @@ export function StrategicInsights({ insights }: { insights: MarketIntelligenceDa
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {insights.map((insight, index) => (
+        {news.map((article, index) => (
           <motion.div
-            key={insight.title}
+            key={article.headline}
             variants={insightVariants}
             initial="hidden"
             animate="visible"
@@ -32,21 +32,16 @@ export function StrategicInsights({ insights }: { insights: MarketIntelligenceDa
             className="p-6 border border-border/50 rounded-xl bg-gradient-to-br from-[#0A0A0A] to-[#1A1A1A] hover:border-purple-400/30 transition-all"
           >
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-medium">{insight.title}</h3>
+              <h3 className="text-lg font-medium">{article.headline}</h3>
               <span className="text-sm bg-purple-900/30 text-purple-400 px-3 py-1 rounded-full">
-                {insight.timeframe}
+                {article.category}
               </span>
             </div>
-            <p className="text-muted-foreground mb-4">{insight.content}</p>
+            <p className="text-muted-foreground mb-4">{article.summary}</p>
             <div className="flex flex-wrap gap-2">
-              {insight.impact_areas.map((area) => (
-                <span 
-                  key={area}
-                  className="text-xs px-2 py-1 bg-purple-900/20 text-purple-300 rounded-full"
-                >
-                  {area}
-                </span>
-              ))}
+              <span className="text-xs px-2 py-1 bg-purple-900/20 text-purple-300 rounded-full">
+                {article.source}
+              </span>
             </div>
           </motion.div>
         ))}
