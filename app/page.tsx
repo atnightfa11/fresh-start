@@ -73,26 +73,6 @@ export default function Page() {
           </div>
         </div>
       </section>
-
-      {/* Demo CTA Section */}
-      <section className="py-16 bg-cyan-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to Transform Your Marketing Intelligence?
-          </h2>
-          <p className="text-xl text-cyan-100 mb-8">
-            Join leading marketing teams who rely on Neural Signal for strategic decision-making
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="bg-white text-cyan-600 hover:bg-gray-100">
-              Start Free Trial
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-              Schedule Demo
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
