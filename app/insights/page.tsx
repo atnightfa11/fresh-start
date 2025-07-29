@@ -15,7 +15,7 @@ export default function InsightsPage() {
   useEffect(() => {
     const fetchInsights = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/market-intelligence');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/market-intelligence`);
         const marketData = await response.json();
         setData(marketData);
       } catch (error) {

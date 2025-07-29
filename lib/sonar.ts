@@ -1,7 +1,7 @@
 import { MarketIntelligenceData } from "@/types/api";
 import { useState, useEffect } from "react";
 
-const MARKET_INTEL_ENDPOINT = 'http://localhost:8000/api/market-intelligence';
+const MARKET_INTEL_ENDPOINT = `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/api/market-intelligence`;
 
 // Add full response validation
 function validateMarketData(data: any): data is MarketIntelligenceData {
